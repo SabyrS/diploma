@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESPM v0.2 — Explainable Security Incident Prioritization Module (Wazuh SIEM)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131b33;
+      --panel-alt: #192342;
+      --border: #263560;
+      --text: #e8eefc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --crit: #ef4444;
+      --high: #f97316;
+      --med: #eab308;
+      --low: #22c55e;
+      --code-bg: #090d1a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 20px 28px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .title-group h1 {
+      font-size: 1.45rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-title {
+      background: linear-gradient(135deg, #0284c7, #4f46e5);
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 4px;
+    }
+    .team-pill {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .team-pill strong { color: var(--accent); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .kpi-label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .kpi-val {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 6px 0 4px;
+      color: #fff;
+    }
+    .kpi-delta {
+      font-size: 0.82rem;
+      color: var(--low);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1100px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card h2 span {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+    tr.queue-row {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    tr.queue-row:hover, tr.queue-row.active {
+      background: var(--panel-alt);
+    }
+    .score-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .score-crit { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid #ef4444; }
+    .score-high { background: rgba(249,115,22,0.2); color: #fdba74; border: 1px solid #f97316; }
+    .score-med  { background: rgba(234,179,8,0.2);  color: #fde047; border: 1px solid #eab308; }
+    .score-low  { background: rgba(34,197,94,0.18); color: #86efac; border: 1px solid #22c55e; }
+
+    .tactic-badge {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      color: var(--accent);
+    }
+
+    .factor-row {
+      margin-bottom: 10px;
+    }
+    .factor-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 3px;
+    }
+    .factor-bar-bg {
+      height: 8px;
+      background: #0d1326;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .factor-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+    }
+    .factor-why {
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    pre.json-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      color: #a5f3fc;
+      overflow-x: auto;
+      margin-top: 12px;
+      max-height: 210px;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .sim-control {
+      background: var(--panel-alt);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .sim-control label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .sim-control input[type=range] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+    .sim-results {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .sim-score-box {
+      flex: 1;
+      min-width: 150px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .sim-score-box .num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .bar-compare {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mini-bar {
+      height: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-group">
+      <h1>
+        ESPM — Explainable Security Incident Prioritization Module
+        <span class="badge-title">PoC v0.2 • Wazuh SIEM</span>
+      </h1>
+      <div class="subtitle">
+        Asset Context (CAPE/EPSS) + Event Sequence Analysis (MITRE ATT&amp;CK v20) + Explainability by Design
+      </div>
+    </div>
+    <div class="team-pill">
+      Дипломный проект AITU • Авторы: <strong>Сабыр</strong> (Asset Context, Scoring &amp; UI) и <strong>Владимир</strong> (Wazuh Ingestion, Sequence Analysis &amp; Evaluation)
+    </div>
+  </header>
+
+  <!-- KPI Row -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Проверено алертов Wazuh (AIT-ADS)</div>
+      <div class="kpi-val">2 600 263</div>
+      <div class="kpi-delta">Все 8 сценариев (6 Design + 2 Blind Test)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Средний AUROC / AP (8 сценариев)</div>
+      <div class="kpi-val">0.967 / 0.948</div>
+      <div class="kpi-delta">против 0.688 / 0.572 у Severity Baseline</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Precision@10% (Macro / Blind Test)</div>
+      <div class="kpi-val">87.3% / 100%</div>
+      <div class="kpi-delta">против 31.8% / 50.7% у Severity Baseline</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Медианный ранг захвата ROOT (level=3)</div>
+      <div class="kpi-val">#1.5 (#1–#3.5)</div>
+      <div class="kpi-delta">RBA: #210 515 • Severity: #247 210 (пропуск!)</div>
+    </div>
+  </div>
+
+  <!-- Main Queue + Explanation Panel -->
+  <div class="main-grid">
+    <div class="card">
+      <h2>
+        Приоритизированная очередь инцидентов (Сценарий: russellmitchell, 41 488 алертов)
+        <span>Нажмите на строку для просмотра объяснения</span>
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Ранг ESPM</th>
+            <th>ESPM Скор</th>
+            <th>Severity (Wazuh)</th>
+            <th>Актив (CMDB Role)</th>
+            <th>Правило и описание</th>
+            <th>Тактика MITRE ATT&amp;CK</th>
+            <th>Ground Truth</th>
+          </tr>
+        </thead>
+        <tbody id="queue-body"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>
+        Декомпозиция решения приоритета (Explainability by Design)
+        <span id="selected-alert-id">Выберите инцидент</span>
+      </h2>
+      <div id="explanation-bars"></div>
+      <pre class="json-box" id="explanation-json"></pre>
+    </div>
+  </div>
+
+  <!-- Interactive Simulator -->
+  <div class="card" style="margin-bottom: 24px;">
+    <h2>
+      Интерактивный симулятор скоринга ESPM (What-If анализ для предзащиты)
+      <span>Priority = 100 · Σ (wᵢ · fᵢ) / Σ wᵢ</span>
+    </h2>
+    <div class="sim-grid">
+      <div class="sim-control">
+        <label><span>Wazuh Rule Level (0–15)</span><strong id="val-sev">3 (0.20)</strong></label>
+        <input type="range" id="sim-sev" min="0" max="15" step="1" value="3" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>Asset Criticality (w=0.15)</span><strong id="val-crit">0.95</strong></label>
+        <input type="range" id="sim-crit" min="0" max="1" step="0.05" value="0.95" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>Asset Vulnerability EPSS (w=0.10)</span><strong id="val-vuln">0.90</strong></label>
+        <input type="range" id="sim-vuln" min="0" max="1" step="0.05" value="0.90" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>Network Centrality (w=0.05)</span><strong id="val-cent">0.85</strong></label>
+        <input type="range" id="sim-cent" min="0" max="1" step="0.05" value="0.85" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>MITRE ATT&amp;CK Phase (w=0.30)</span><strong id="val-phase">0.95 (PrivEsc)</strong></label>
+        <input type="range" id="sim-phase" min="0.05" max="0.95" step="0.05" value="0.95" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>Burst Progression (w=0.10)</span><strong id="val-prog">1.00</strong></label>
+        <input type="range" id="sim-prog" min="0" max="1" step="0.05" value="1.00" oninput="updateSim()" />
+      </div>
+      <div class="sim-control">
+        <label><span>Kill-Chain Evidence (w=0.15)</span><strong id="val-chain">1.00</strong></label>
+        <input type="range" id="sim-chain" min="0" max="1" step="0.1" value="1.00" oninput="updateSim()" />
+      </div>
+    </div>
+    <div class="sim-results">
+      <div class="sim-score-box">
+        <div class="kpi-label">ESPM v0.2 Priority</div>
+        <div class="num" id="sim-out-espm" style="color: #38bdf8;">84.0</div>
+      </div>
+      <div class="sim-score-box">
+        <div class="kpi-label">RBA Baseline (Context Only)</div>
+        <div class="num" id="sim-out-rba" style="color: #eab308;">41.8</div>
+      </div>
+      <div class="sim-score-box">
+        <div class="kpi-label">Severity Baseline (rule.level)</div>
+        <div class="num" id="sim-out-sev" style="color: #ef4444;">20.0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8-Scenario Benchmark Table -->
+  <div class="card">
+    <h2>
+      Сравнительные результаты на всех 8 сценариях датасета AIT-ADS (2 600 263 алерта Wazuh)
+      <span>Метрики: AUROC, Average Precision (AP), Precision@10%, Лучший ранг Root PrivEsc (level=3)</span>
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Сценарий</th>
+          <th>Выборка</th>
+          <th>Всего алертов</th>
+          <th>Доля атак</th>
+          <th>AUROC (ESPM / RBA / Sev)</th>
+          <th>AP / PR-AUC (ESPM / RBA / Sev)</th>
+          <th>Precision@10% (ESPM / RBA / Sev)</th>
+          <th>Ранг Root PrivEsc (ESPM / RBA / Sev)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>russellmitchell</strong></td>
+          <td>Design</td>
+          <td>41 488</td>
+          <td>20.6%</td>
+          <td><strong>0.952</strong> / 0.945 / 0.720</td>
+          <td><strong>0.941</strong> / 0.912 / 0.455</td>
+          <td><strong>100.0%</strong> / 95.6% / 13.5%</td>
+          <td><strong style="color:#4ade80;">#2.0</strong> / #7 973 / #29 261</td>
+        </tr>
+        <tr>
+          <td><strong>shaw</strong></td>
+          <td>Design</td>
+          <td>68 539</td>
+          <td>8.7%</td>
+          <td><strong>0.933</strong> / 0.929 / 0.718</td>
+          <td><strong>0.894</strong> / 0.829 / 0.232</td>
+          <td><strong>75.9%</strong> / 75.9% / 5.4%</td>
+          <td><strong style="color:#4ade80;">#1.0</strong> / #5 627 / #22 449</td>
+        </tr>
+        <tr>
+          <td><strong>wardbeck</strong></td>
+          <td>Design</td>
+          <td>88 204</td>
+          <td>6.9%</td>
+          <td><strong>0.935</strong> / 0.928 / 0.689</td>
+          <td><strong>0.888</strong> / 0.807 / 0.178</td>
+          <td><strong>59.8%</strong> / 59.4% / 4.4%</td>
+          <td><strong style="color:#4ade80;">#1.5</strong> / #5 746 / #30 006</td>
+        </tr>
+        <tr>
+          <td><strong>santos</strong></td>
+          <td>Design</td>
+          <td>126 513</td>
+          <td>7.6%</td>
+          <td><strong>0.930</strong> / 0.901 / 0.609</td>
+          <td><strong>0.862</strong> / 0.687 / 0.143</td>
+          <td><strong>62.7%</strong> / 61.5% / 4.6%</td>
+          <td><strong style="color:#4ade80;">#1.0</strong> / #9 745 / #52 053</td>
+        </tr>
+        <tr>
+          <td><strong>fox</strong></td>
+          <td>Design</td>
+          <td>462 523</td>
+          <td>89.1%</td>
+          <td><strong>0.998</strong> / 0.993 / 0.796</td>
+          <td><strong>1.000</strong> / 0.999 / 0.974</td>
+          <td><strong>100.0%</strong> / 99.4% / 75.9%</td>
+          <td><strong style="color:#4ade80;">#3.5</strong> / #411 286 / #442 367</td>
+        </tr>
+        <tr>
+          <td><strong>wilson</strong></td>
+          <td>Design</td>
+          <td>625 303</td>
+          <td>69.1%</td>
+          <td><strong>0.995</strong> / 0.984 / 0.692</td>
+          <td><strong>0.998</strong> / 0.993 / 0.871</td>
+          <td><strong>100.0%</strong> / 96.6% / 49.0%</td>
+          <td><strong style="color:#4ade80;">#1.5</strong> / #429 091 / #492 377</td>
+        </tr>
+        <tr>
+          <td><strong>harrison</strong></td>
+          <td><span class="tactic-badge">Blind Test 1</span></td>
+          <td>583 754</td>
+          <td>72.3%</td>
+          <td><strong>0.995</strong> / 0.973 / 0.622</td>
+          <td><strong>0.998</strong> / 0.990 / 0.862</td>
+          <td><strong>100.0%</strong> / 94.1% / 50.9%</td>
+          <td><strong style="color:#4ade80;">#1.0</strong> / #418 878 / #483 058</td>
+        </tr>
+        <tr>
+          <td><strong>wheeler</strong></td>
+          <td><span class="tactic-badge">Blind Test 2</span></td>
+          <td>603 939</td>
+          <td>69.7%</td>
+          <td><strong>0.998</strong> / 0.988 / 0.654</td>
+          <td><strong>0.999</strong> / 0.995 / 0.864</td>
+          <td><strong>100.0%</strong> / 96.7% / 50.6%</td>
+          <td><strong style="color:#4ade80;">#310 (Top 0.05%)</strong> / #421 283 / #488 354</td>
+        </tr>
+        <tr style="background: rgba(56,189,248,0.08); font-weight: 600;">
+          <td><strong>Среднее (Macro)</strong></td>
+          <td>Все 8 сценариев</td>
+          <td><strong>2 600 263</strong></td>
+          <td>—</td>
+          <td><strong style="color:#38bdf8;">0.967</strong> / 0.955 / 0.688</td>
+          <td><strong style="color:#38bdf8;">0.948</strong> / 0.903 / 0.572</td>
+          <td><strong style="color:#38bdf8;">87.3%</strong> / 84.9% / 31.8%</td>
+          <td><strong style="color:#4ade80;">Мед. #1.5</strong> / #210 515 / #247 210</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const INCIDENTS = [
+      {
+        rank: "#1",
+        priority: 84.0,
+        sev_score: 20.0,
+        level: 3,
+        rule_id: "5402",
+        host: "intranet-server",
+        role: "intranet-server (crit=0.95)",
+        desc: "Successful sudo to ROOT executed (jhall -> root in /var/www/intranet)",
+        tactic: "Privilege Escalation (TA0004)",
+        stage: "privilege_escalation",
+        truth: "ATTACK (PrivEsc)",
+        is_attack: true,
+        explanation: [
+          { factor: "attack_phase", value: 0.95, contribution: 0.285, why: "stage=privilege_escalation MITRE tactic=Privilege Escalation" },
+          { factor: "chain_evidence", value: 1.00, contribution: 0.150, why: "prior_alerts=3, active_killchain_stages=5 (Recon -> Initial Access -> Execution -> PrivEsc)" },
+          { factor: "asset_criticality", value: 0.95, contribution: 0.1425, why: "asset 'intranet-server' role=intranet-server (crit=0.95)" },
+          { factor: "attack_progression", value: 1.00, contribution: 0.100, why: "multi-stage post-exploitation escalation on target host" },
+          { factor: "asset_vulnerability", value: 0.90, contribution: 0.090, why: "EPSS/CVE-2020-24186 exposure score=0.90" },
+          { factor: "asset_centrality", value: 0.85, contribution: 0.0425, why: "network topology centrality=0.85" },
+          { factor: "severity", value: 0.20, contribution: 0.030, why: "wazuh rule.level=3 (0.20)" }
+        ]
+      },
+      {
+        rank: "#2",
+        priority: 84.0,
+        sev_score: 20.0,
+        level: 3,
+        rule_id: "5304",
+        host: "intranet-server",
+        role: "intranet-server (crit=0.95)",
+        desc: "User successfully changed UID (su: www-data -> jhall via reverse shell)",
+        tactic: "Privilege Escalation (TA0004)",
+        stage: "privilege_escalation",
+        truth: "ATTACK (PrivEsc)",
+        is_attack: true,
+        explanation: [
+          { factor: "attack_phase", value: 0.95, contribution: 0.285, why: "stage=privilege_escalation MITRE tactic=Privilege Escalation" },
+          { factor: "chain_evidence", value: 1.00, contribution: 0.150, why: "active_killchain_stages=4 on intranet-server" },
+          { factor: "asset_criticality", value: 0.95, contribution: 0.1425, why: "asset 'intranet-server' role=intranet-server (crit=0.95)" },
+          { factor: "attack_progression", value: 1.00, contribution: 0.100, why: "post-exploitation transition after web compromise" },
+          { factor: "asset_vulnerability", value: 0.90, contribution: 0.090, why: "EPSS/CVE-2020-24186 exposure score=0.90" },
+          { factor: "asset_centrality", value: 0.85, contribution: 0.0425, why: "network topology centrality=0.85" },
+          { factor: "severity", value: 0.20, contribution: 0.030, why: "wazuh rule.level=3 (0.20)" }
+        ]
+      },
+      {
+        rank: "#4",
+        priority: 82.5,
+        sev_score: 40.0,
+        level: 6,
+        rule_id: "31516",
+        host: "wazuh-client (/var/log/apache2)",
+        role: "intranet-server (crit=0.95)",
+        desc: "Suspicious URL access: GET /.htaccess & wpDiscuz webshell upload probe",
+        tactic: "Initial Access (TA0001)",
+        stage: "web_attack",
+        truth: "ATTACK (Webshell/Exploit)",
+        is_attack: true,
+        explanation: [
+          { factor: "attack_phase", value: 0.80, contribution: 0.240, why: "stage=web_attack MITRE tactic=Initial Access" },
+          { factor: "chain_evidence", value: 1.00, contribution: 0.150, why: "prior_alerts=90, active_killchain_stages=2" },
+          { factor: "asset_criticality", value: 0.95, contribution: 0.1425, why: "asset 'intranet-server' role=intranet-server (crit=0.95)" },
+          { factor: "attack_progression", value: 1.00, contribution: 0.100, why: "90 alerts in 600s window vs baseline" },
+          { factor: "asset_vulnerability", value: 0.90, contribution: 0.090, why: "EPSS/CVE-2020-24186 exposure score=0.90" },
+          { factor: "severity", value: 0.40, contribution: 0.060, why: "wazuh rule.level=6 (0.40)" },
+          { factor: "asset_centrality", value: 0.85, contribution: 0.0425, why: "network topology centrality=0.85" }
+        ]
+      },
+      {
+        rank: "#15",
+        priority: 81.0,
+        sev_score: 66.7,
+        level: 10,
+        rule_id: "31151",
+        host: "wazuh-client (/var/log/apache2)",
+        role: "intranet-server (crit=0.95)",
+        desc: "Multiple web server 400 error codes from same source IP (dirb/wpscan)",
+        tactic: "Reconnaissance (TA0043)",
+        stage: "network_scans",
+        truth: "ATTACK (Active Scan)",
+        is_attack: true,
+        explanation: [
+          { factor: "attack_phase", value: 0.65, contribution: 0.195, why: "stage=network_scans MITRE tactic=Reconnaissance" },
+          { factor: "chain_evidence", value: 1.00, contribution: 0.150, why: "preceded/accompanied by web_attack stage on host" },
+          { factor: "asset_criticality", value: 0.95, contribution: 0.1425, why: "asset 'intranet-server' role=intranet-server (crit=0.95)" },
+          { factor: "severity", value: 0.667, contribution: 0.100, why: "wazuh rule.level=10 (0.67)" },
+          { factor: "attack_progression", value: 1.00, contribution: 0.100, why: "high-rate burst in 600s window" },
+          { factor: "asset_vulnerability", value: 0.90, contribution: 0.090, why: "EPSS/CVE exposure score=0.90" },
+          { factor: "asset_centrality", value: 0.85, contribution: 0.0425, why: "network topology centrality=0.85" }
+        ]
+      },
+      {
+        rank: "#19 240",
+        priority: 26.6,
+        sev_score: 40.0,
+        level: 6,
+        rule_id: "20101",
+        host: "wazuh-client (/var/log/suricata)",
+        role: "network-ids-sensor (crit=0.35)",
+        desc: "IDS event (Suricata TLS invalid handshake background noise)",
+        tactic: "Discovery (Benign IDS Noise)",
+        stage: "ids_signal",
+        truth: "NORMAL (False Positive)",
+        is_attack: false,
+        explanation: [
+          { factor: "chain_evidence", value: 0.60, contribution: 0.090, why: "routine recurring IDS noise, no high-stage escalation" },
+          { factor: "severity", value: 0.40, contribution: 0.060, why: "wazuh rule.level=6 (0.40) — inflated in raw SIEM!" },
+          { factor: "asset_criticality", value: 0.35, contribution: 0.0525, why: "passive network-ids-sensor (crit=0.35)" },
+          { factor: "attack_phase", value: 0.12, contribution: 0.036, why: "stage=ids_signal low-confidence TLS alert" },
+          { factor: "asset_centrality", value: 0.50, contribution: 0.025, why: "network centrality=0.50" },
+          { factor: "asset_vulnerability", value: 0.20, contribution: 0.020, why: "sensor vulnerability=0.20" },
+          { factor: "attack_progression", value: 0.15, contribution: 0.015, why: "steady background rate (no burst)" }
+        ]
+      },
+      {
+        rank: "#34 110",
+        priority: 21.8,
+        sev_score: 20.0,
+        level: 3,
+        rule_id: "9701",
+        host: "mail (/var/log/mail.log)",
+        role: "mail-server (crit=0.55)",
+        desc: "Dovecot Authentication Success (Routine user IMAP polling)",
+        tactic: "— (Benign Routine Auth)",
+        stage: "routine_auth",
+        truth: "NORMAL (Benign)",
+        is_attack: false,
+        explanation: [
+          { factor: "asset_criticality", value: 0.55, contribution: 0.0825, why: "mail-server role (crit=0.55)" },
+          { factor: "chain_evidence", value: 0.60, contribution: 0.090, why: "routine periodic logins, 0 active attack stages" },
+          { factor: "severity", value: 0.20, contribution: 0.030, why: "wazuh rule.level=3 (0.20)" },
+          { factor: "asset_vulnerability", value: 0.30, contribution: 0.030, why: "EPSS exposure=0.30" },
+          { factor: "asset_centrality", value: 0.50, contribution: 0.025, why: "network centrality=0.50" },
+          { factor: "attack_phase", value: 0.05, contribution: 0.015, why: "stage=routine_auth benign Dovecot login" },
+          { factor: "attack_progression", value: 0.10, contribution: 0.010, why: "constant background rate" }
+        ]
+      }
+    ];
+
+    function scoreClass(p) {
+      if (p >= 80) return "score-crit";
+      if (p >= 65) return "score-high";
+      if (p >= 40) return "score-med";
+      return "score-low";
+    }
+
+    function renderQueue() {
+      const tbody = document.getElementById("queue-body");
+      tbody.innerHTML = "";
+      INCIDENTS.forEach((inc, idx) => {
+        const tr = document.createElement("tr");
+        tr.className = "queue-row" + (idx === 0 ? " active" : "");
+        tr.onclick = () => selectIncident(idx);
+        tr.innerHTML = `
+          <td><strong>${inc.rank}</strong></td>
+          <td><span class="score-pill ${scoreClass(inc.priority)}">${inc.priority.toFixed(1)}</span></td>
+          <td><span class="score-pill ${scoreClass(inc.sev_score)}">${inc.sev_score.toFixed(1)} (L${inc.level})</span></td>
+          <td>${inc.role}</td>
+          <td><strong>[${inc.rule_id}]</strong> ${inc.desc}</td>
+          <td><span class="tactic-badge">${inc.tactic}</span></td>
+          <td style="color:${inc.is_attack ? '#f87171' : '#4ade80'}; font-weight:600;">${inc.truth}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      selectIncident(0);
+    }
+
+    function selectIncident(idx) {
+      document.querySelectorAll(".queue-row").forEach((el, i) => {
+        el.classList.toggle("active", i === idx);
+      });
+      const inc = INCIDENTS[idx];
+      document.getElementById("selected-alert-id").textContent =
+        `Rule ${inc.rule_id} • ESPM=${inc.priority.toFixed(1)} vs Severity=${inc.sev_score.toFixed(1)}`;
+      const bars = document.getElementById("explanation-bars");
+      bars.innerHTML = inc.explanation.map(e => {
+        const pct = Math.min(100, (e.contribution / 0.30) * 100);
+        return `
+          <div class="factor-row">
+            <div class="factor-header">
+              <span><strong>${e.factor}</strong> (f = ${e.value.toFixed(2)})</span>
+              <span style="color:#38bdf8; font-weight:700;">+${(e.contribution * 100).toFixed(1)} pts</span>
+            </div>
+            <div class="factor-bar-bg">
+              <div class="factor-bar-fill" style="width:${pct}%"></div>
+            </div>
+            <div class="factor-why">${e.why}</div>
+          </div>
+        `;
+      }).join("");
+      document.getElementById("explanation-json").textContent = JSON.stringify({
+        priority: inc.priority,
+        rule_id: inc.rule_id,
+        wazuh_level: inc.level,
+        stage: inc.stage,
+        tactic: inc.tactic,
+        ground_truth: inc.truth,
+        explanation: inc.explanation
+      }, null, 2);
+    }
+
+    function updateSim() {
+      const lvl = parseFloat(document.getElementById("sim-sev").value);
+      const f_sev = Math.min(1.0, lvl / 15.0);
+      const crit = parseFloat(document.getElementById("sim-crit").value);
+      const vuln = parseFloat(document.getElementById("sim-vuln").value);
+      const cent = parseFloat(document.getElementById("sim-cent").value);
+      const phase = parseFloat(document.getElementById("sim-phase").value);
+      const prog = parseFloat(document.getElementById("sim-prog").value);
+      const chain = parseFloat(document.getElementById("sim-chain").value);
+
+      document.getElementById("val-sev").textContent = `${lvl} (${f_sev.toFixed(2)})`;
+      document.getElementById("val-crit").textContent = crit.toFixed(2);
+      document.getElementById("val-vuln").textContent = vuln.toFixed(2);
+      document.getElementById("val-cent").textContent = cent.toFixed(2);
+      document.getElementById("val-phase").textContent = phase.toFixed(2);
+      document.getElementById("val-prog").textContent = prog.toFixed(2);
+      document.getElementById("val-chain").textContent = chain.toFixed(2);
+
+      const espm = 100.0 * (0.15*f_sev + 0.15*crit + 0.10*vuln + 0.05*cent + 0.30*phase + 0.10*prog + 0.15*chain);
+      const rba = 100.0 * (0.70*f_sev + 0.30*((crit + vuln)/2.0));
+      const sev = 100.0 * f_sev;
+
+      document.getElementById("sim-out-espm").textContent = espm.toFixed(1);
+      document.getElementById("sim-out-rba").textContent = rba.toFixed(1);
+      document.getElementById("sim-out-sev").textContent = sev.toFixed(1);
+    }
+
+    renderQueue();
+  </script>
+</body>
+</html>

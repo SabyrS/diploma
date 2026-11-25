@@ -1,0 +1,12 @@
+%
+% File: abstract.tex
+%
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Security Operations Centers (SOCs) face severe alert fatigue caused by high volumes of false positives and context-blind severity rules in Security Information and Event Management (SIEM) systems. Traditional severity-based prioritization evaluates alerts in isolation, ignoring both the business criticality and vulnerability exposure of the targeted asset and the temporal progression of multi-step cyberattacks across the MITRE ATT\&CK kill chain. Meanwhile, black-box machine learning and deep reinforcement learning triage models lack native transparency, and post-hoc explainable AI (XAI) techniques such as SHAP and LIME have been shown to suffer from adversarial manipulation and multicollinearity fragility.
+
+This diploma project presents \textbf{ESPM (Explainable Security Incident Prioritization Module)}, a lightweight, explainable-by-design prioritization module for the open-source Wazuh SIEM. ESPM integrates three complementary dimensions into a normalized linear-additive scoring model: (1) location-aware asset context derived from CMDB attributes (business criticality, EPSS vulnerability exposure, and network centrality), (2) event sequence analysis using MITRE ATT\&CK v20 tactic ordering combined with an $O(1)$ time-bucketed burst detector and multi-stage kill-chain memory, and (3) intrinsic explainability where each priority score is decomposed into exact factor contributions. Evaluated across all 8 multi-step attack scenarios from the public AIT Alert Data Set (AIT-ADS, totaling \textbf{2,600,263 Wazuh alerts}, including two untouched blind scenarios \texttt{harrison} and \texttt{wheeler}), ESPM v0.2 achieves a macro-average \textbf{AUROC of 0.967}, \textbf{Average Precision (AP) of 0.948}, and \textbf{87.3\% Precision@10\%}, significantly outperforming the standard Wazuh severity baseline (AUROC 0.688, AP 0.572, Precision@10\% 31.8\%) and simplified Risk-Based Alerting (AUROC 0.955, AP 0.903). Crucially, ESPM elevates stealthy root privilege escalation events (\texttt{su} and \texttt{sudo} to root, Wazuh level 3) from a median queue rank of \#247,210 (Severity) and \#210,515 (RBA) to a median rank of \textbf{\#1.5} in the analyst queue.
+
+\vspace{4mm}
+\keywords{SIEM, Wazuh, Alert Prioritization, Alert Fatigue, Asset Context, MITRE ATT\&CK, Event Sequence Analysis, Explainable AI, Risk-Based Alerting.}

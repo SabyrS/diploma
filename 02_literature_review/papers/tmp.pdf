@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+
+
+
+
+
+	
+	<style>
+    
+
+	#srh-inp {
+		color: #fff;
+	}
+
+	/* Modern autocomplete dropdown */
+	.ui-autocomplete {
+		background: white;
+		list-style-type: none;
+		padding: 0.2rem 0;
+		min-width: 515px;
+		max-width: 515px;
+		border: 1px solid #e5e7eb;
+		border-radius: 12px;
+		box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+		z-index: 9999 !important;
+		left: 320px !important;
+
+	}
+
+	.ui-autocomplete li {
+		padding: 0;
+		cursor: pointer;
+		border: none;
+		margin: 0;
+	}
+
+	.ui-autocomplete li a {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1rem;
+		text-decoration: none;
+		color: #1f2937;
+		transition: background 0.2s ease;
+	}
+
+	.ui-autocomplete li:hover a,
+	.ui-autocomplete li.ui-state-active a,
+	.ui-autocomplete li.ui-state-focus a {
+		background: #f8f9fa;
+		color: #1f2937;
+	}
+
+	.ui-autocomplete li:first-child a {
+		border-radius: 12px 12px 0 0;
+	}
+
+	.ui-autocomplete li:last-child a {
+		border-radius: 0 0 12px 12px;
+	}
+
+	/* Search result content */
+	.search-result-main {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		flex: 1;
+	}
+	
+	.search-result-logo {
+		width: 32px;
+		height: 32px;
+		border-radius: 6px;
+		background: #e5e7eb;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		border: 1px solid #d1d5db;
+	}
+	
+	.search-result-logo img {
+		width: 24px;
+		height: 24px;
+		border-radius: 4px;
+		object-fit: contain;
+	}
+	
+	.search-result-logo i {
+		color: #6b7280;
+		font-size: 0.8rem;
+	}
+	
+	.search-result-text {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-width: 0;
+		gap: 0.15rem;
+	}
+	
+	.search-result-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.search-result-symbol {
+		font-weight: 600;
+		font-size: 0.95rem;
+		color: #1f2937;
+	}
+
+	.search-result-name {
+		font-size: 0.85rem;
+		color: #6b7280;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.search-result-exchange {
+		font-size: 0.7rem;
+		color: #9ca3af;
+	}
+
+	.search-result-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex-shrink: 0;
+	}
+
+	/* Badge styling - clean grey for both */
+	.search-badge {
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.7rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		background: #e5e7eb;
+		color: #6b7280;
+	}
+
+	/* AI search option */
+	.search-ai-option {
+		color: #1f2937 !important;
+		font-weight: 500;
+	}
+
+	.search-ai-option i {
+		margin-right: 0.5rem;
+		color: #1f2937;
+	}
+
+	/* Enhanced navbar search */
+	.navbar {
+		display: flex !important;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		padding: 0.5rem 1.5rem;
+	}
+	
+	.search-bar-container {
+		display: flex;
+		align-items: center;
+		flex: 1;
+		max-width: none !important;
+	}
+
+	.search-wrapper-nav {
+		display: flex;
+		align-items: center;
+		background: white;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		padding: 0.3rem 0.5rem;
+		width: 100%;
+		transition: all 0.2s ease;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+	}
+
+	.search-wrapper-nav:focus-within {
+		border-color: #1D2838;
+		box-shadow: 0 2px 8px rgba(29, 40, 56, 0.1);
+	}
+
+	.search-icon-nav {
+		padding: 0 0.5rem;
+		color: #9ca3af;
+		font-size: 1rem;
+	}
+
+	.search-input-nav {
+		flex: 1;
+		border: none;
+		outline: none;
+		font-size: 0.95rem;
+		padding: 0.4rem 0;
+		color: #1f2937 !important;
+		background: transparent;
+	}
+	
+	.search-input-nav:focus {
+		color: #1f2937 !important;
+	}
+
+	.search-input-nav::placeholder {
+		color: #9ca3af;
+	}
+
+	.search-filters {
+		display: flex;
+		gap: 0.3rem;
+		padding-left: 0.5rem;
+		border-left: 1px solid #e5e7eb;
+		margin-left: 0.5rem;
+	}
+
+	.search-filter-btn {
+		padding: 0.3rem 0.6rem;
+		border: 1px solid #e5e7eb;
+		background: white;
+		border-radius: 5px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		color: #6b7280;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		white-space: nowrap;
+	}
+
+	.search-filter-btn:hover {
+		background: #f8f9fa;
+		border-color: #1D2838;
+		color: #1D2838;
+	}
+
+	.search-filter-btn.active {
+		background: #1D2838;
+		color: white;
+		border-color: #1D2838;
+	}
+
+	/* Mobile responsive */
+	@media (max-width: 768px) {
+		.search-filters {
+			display: none;
+		}
+		
+		.search-bar-container {
+			max-width: 100% !important;
+			margin: 0 0.5rem !important;
+		}
+	}
+
+	/* jQuery UI injects a live region announcing "N results are available, use up
+	   and down arrow keys to navigate" for screen readers. It should be visually
+	   hidden, but some CSS reset is making it appear in the footer. Force-hide it. */
+	.ui-helper-hidden-accessible,
+	.ui-helper-hidden-accessible * {
+		position: absolute !important;
+		clip: rect(0 0 0 0) !important;
+		clip-path: inset(50%) !important;
+		width: 1px !important;
+		height: 1px !important;
+		overflow: hidden !important;
+		white-space: nowrap !important;
+		border: 0 !important;
+		padding: 0 !important;
+		margin: -1px !important;
+	}
+
+
+	/* Sidebar */
+	#sidebar,
+	.sidebar,
+	nav.sidebar {
+		width: 220px;
+		min-width: 220px;
+		max-width: 220px;
+		background: #fff !important;
+		border-right: 1px solid #e5e7eb !important;
+		transition: margin-left 0.3s ease, width 0.3s ease;
+	}
+
+	body.sidebar-collapsed #sidebar,
+	body.sidebar-collapsed .sidebar,
+	body.sidebar-collapsed nav.sidebar {
+		margin-left: -220px;
+	}
+
+	body.sidebar-collapsed .main {
+		margin-left: 0 !important;
+	}
+
+	.sidebar-content,
+	.sidebar .simplebar-wrapper,
+	.sidebar .simplebar-mask,
+	.sidebar .simplebar-offset,
+	.sidebar .simplebar-content-wrapper,
+	.sidebar .simplebar-content,
+	.sidebar .sidebar-nav,
+	.sidebar .sidebar-item,
+	.sidebar .sidebar-dropdown {
+		background: #fff !important;
+	}
+
+	.sidebar-brand {
+		padding: 1.4rem 1.25rem 0.9rem !important;
+		border-bottom: none !important;
+		margin-bottom: 0.5rem;
+	}
+
+	/* Drawer close (X) button — hidden on desktop, shown on mobile via media query. */
+	.sidebar-close {
+		display: none;
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		width: 36px;
+		height: 36px;
+		border: none;
+		background: transparent;
+		font-size: 1.75rem;
+		line-height: 1;
+		color: #6b7280;
+		cursor: pointer;
+		border-radius: 6px;
+		z-index: 2;
+	}
+	.sidebar-close:hover,
+	.sidebar-close:focus {
+		background: #f3f4f6;
+		color: #111827;
+	}
+	.mobile-brand img {
+		display: block;
+		height: 28px;
+		width: auto;
+	}
+
+
+	.navbar.navbar-bg {
+		border-bottom: 1px solid #f0f0f0 !important;
+		box-shadow: none !important;
+		background: #fff !important;
+	}
+
+	.sidebar-brand h3 {
+		font-size: 1.3rem !important;
+		font-weight: 700 !important;
+		letter-spacing: -0.3px;
+	}
+
+	.sidebar-nav {
+		margin-bottom: 0rem !important;
+		padding: 0 0.5rem !important;
+	}
+
+	.sidebar-item {
+		margin: 1px 0;
+		padding: 0;
+	}
+
+	.sidebar-item .sidebar-link {
+		padding: 0.45rem 0.75rem !important;
+		border-radius: 6px !important;
+		font-size: 0.9rem !important;
+		color: #374151 !important;
+		font-weight: 450 !important;
+		transition: all 0.15s ease !important;
+		border-left: none !important;
+	}
+
+	.sidebar-item .sidebar-link .align-middle,
+	.sidebar-item .sidebar-link span {
+		color: #374151 !important;
+		font-size: 0.9rem !important;
+	}
+
+	.sidebar-item .sidebar-link svg,
+	.sidebar-item .sidebar-link .feather {
+		width: 16px !important;
+		height: 16px !important;
+		color: #9ca3af !important;
+		stroke-width: 1.75 !important;
+	}
+
+	.sidebar-dropdown .sidebar-item {
+		margin-left: 0;
+	}
+
+	.sidebar-dropdown .sidebar-item .sidebar-link {
+		padding-left: 3rem !important;
+		font-size: 0.82rem !important;
+		color: #374151 !important;
+		font-weight: 400 !important;
+	}
+
+	.sidebar-dropdown .sidebar-item .sidebar-link span {
+		color: #374151 !important;
+		font-size: 0.82rem !important;
+	}
+		
+	/* Mega menu styling - adjusted positioning */
+	.dropdown-mega {
+			width: 800px !important;
+			padding: 1.5rem;
+			position: absolute !important;
+			z-index: 1060 !important;
+			background-color: white;
+			border-radius: 8px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+	}
+
+	.dropdown-mega-list {
+			min-width: 200px;
+			margin-right: 20px;
+	}
+
+	.dropdown-header {
+			font-weight: 600;
+			padding: 0.5rem 0;
+			color: #495057;
+			border-bottom: 1px solid #e9ecef;
+			margin-bottom: 0.5rem;
+	}
+
+	.dropdown-item {
+			padding: 0.4rem 0;
+			color: #212529;
+	}
+
+	.dropdown-item:hover {
+			background-color: #f8f9fa;
+			color: #1e3a8a;
+	}
+
+	/* Ensure the mega menu container has proper positioning */
+	.navbar-nav .nav-item.dropdown {
+			position: static !important;
+	}
+
+	/* Override any max-width constraints */
+	.dropdown-menu.dropdown-mega {
+			overflow: visible !important;
+	}
+
+	/* Fix dropdown item hover */
+	.dropdown-mega .dropdown-item:hover {
+			background-color: #f8f9fa;
+	}
+
+	/* Ensure dropdown is visible */
+	.dropdown-menu.show {
+			display: block !important;
+	}
+
+	/* Fix for navbar layout */
+	.navbar {
+			position: relative;
+	}
+
+	/* Ensure the mega menu container has proper positioning */
+	.navbar-nav .dropdown {
+			position: static !important;
+	}
+
+	@media (min-width: 992px) {
+			.navbar-nav .dropdown {
+					position: relative !important;
+			}
+	}
+
+	/* Override any max-width constraints */
+	.dropdown-menu.dropdown-mega {
+			max-width: 800px !important;
+			overflow: visible !important;
+	}
+
+	/* Add these CSS rules to fix the Account dropdown positioning */
+	.navbar-align {
+			margin-left: auto !important;
+	}
+
+	/* Override the static positioning for regular dropdowns */
+	.navbar-nav .nav-item.dropdown:not(.tools-dropdown) {
+			position: relative !important;
+	}
+
+	/* Make sure the account dropdown appears in the right place */
+	.navbar-nav .nav-item.dropdown:not(.tools-dropdown) .dropdown-menu {
+			right: 0 !important;
+			left: auto !important;
+	}
+
+	/* Add a class to the Tools dropdown */
+	.navbar-nav .nav-item.tools-dropdown {
+			position: static !important;
+	}
+
+	.sidebar-item.active .sidebar-dropdown.collapse {
+		display: block;
+	}
+
+	.sidebar-item.active > .sidebar-link {
+		background: #f3f4f6 !important;
+		color: #111827 !important;
+	}
+
+	.sidebar-item.active > .sidebar-link span,
+	.sidebar-item.active > .sidebar-link svg {
+		color: #111827 !important;
+	}
+
+	.sidebar-dropdown.show {
+		display: block;
+	}
+
+	.sidebar-link[aria-expanded="true"] {
+		background: #f3f4f6 !important;
+		border-left: none !important;
+	}
+
+	.sidebar-item .sidebar-link:hover {
+		background: #f5f5f5 !important;
+		color: #111827 !important;
+	}
+
+	.sidebar-item .sidebar-link:hover span,
+	.sidebar-item .sidebar-link:hover .align-middle,
+	.sidebar-item .sidebar-link:hover svg {
+		color: #111827 !important;
+	}
+
+	/* Dropdown chevrons */
+	.earnings-chevron, .calendars-chevron, .data-feeds-chevron {
+		font-size: 10px !important;
+		color: #9ca3af !important;
+		transition: transform 0.2s ease;
+	}
+
+	/* ===========================================
+	   MOBILE LAYOUT FIXES
+	   Hide the 220px left sidebar on mobile, prevent horizontal overflow,
+	   and make the search autocomplete dropdown responsive.
+	   =========================================== */
+	@media (max-width: 991.98px) {
+		html, body {
+			overflow-x: hidden;
+			max-width: 100vw;
+		}
+		/* On mobile the sidebar becomes a slide-in drawer triggered by the
+		   hamburger. The body class `sidebar-collapsed` (toggled by the
+		   existing hamburger onclick) is reused to mean "drawer is open" on
+		   mobile. By default the drawer is off-screen. */
+		nav.sidebar,
+		#sidebar,
+		.sidebar {
+			display: block !important;
+			position: fixed !important;
+			top: 0;
+			left: 0;
+			height: 100vh !important;
+			width: 270px !important;
+			min-width: 270px !important;
+			max-width: 85vw !important;
+			margin: 0 !important;
+			transform: translateX(-100%);
+			transition: transform 0.25s ease;
+			z-index: 1050;
+			overflow-y: auto;
+			box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+		}
+		body.sidebar-collapsed nav.sidebar,
+		body.sidebar-collapsed #sidebar,
+		body.sidebar-collapsed .sidebar {
+			transform: translateX(0) !important;
+			margin-left: 0 !important;
+		}
+		/* Click-anywhere backdrop while drawer is open. */
+		body.sidebar-collapsed .sidebar-backdrop {
+			display: block;
+		}
+		.sidebar-backdrop {
+			display: none;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.45);
+			z-index: 1040;
+		}
+		/* Hamburger toggle stays visible on mobile so the user can open the drawer. */
+		.sidebar-toggle {
+			display: inline-flex !important;
+			align-items: center;
+			padding: 0 0.35rem !important;
+			flex: 0 0 auto;
+			cursor: pointer;
+		}
+		/* Show the close (X) button inside the open drawer. */
+		.sidebar-close {
+			display: inline-flex !important;
+			align-items: center;
+			justify-content: center;
+		}
+		.main {
+			margin-left: 0 !important;
+			width: 100% !important;
+			max-width: 100vw;
+		}
+		.ui-autocomplete {
+			min-width: auto !important;
+			max-width: calc(100vw - 24px) !important;
+			left: 12px !important;
+			right: 12px !important;
+		}
+		.navbar.navbar-bg {
+			display: flex !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+			padding: 0.5rem 0.5rem !important;
+			gap: 0.4rem !important;
+			max-width: 100vw;
+			min-width: 0;
+		}
+		/* Search shrinks to fill remaining space between hamburger and right-side controls. */
+		.search-bar-container {
+			width: auto !important;
+			max-width: none !important;
+			min-width: 0 !important;
+			flex: 1 1 0 !important;
+			margin: 0 !important;
+		}
+		.search-bar-container .search-wrapper-nav {
+			width: 100% !important;
+			padding: 0.25rem 0.4rem !important;
+		}
+		.search-input-nav {
+			min-width: 0 !important;
+			font-size: 0.85rem !important;
+		}
+		.navbar-collapse.collapse {
+			flex: 0 0 auto !important;
+			width: auto !important;
+			min-width: 0 !important;
+		}
+		.navbar-collapse .navbar-nav.navbar-align {
+			flex-direction: row !important;
+			align-items: center !important;
+			gap: 0.25rem;
+			margin: 0 !important;
+		}
+		.navbar-collapse .nav-item {
+			padding-top: 0 !important;
+		}
+		/* Hide the Upgrade button on mobile — too cramped; the user can still
+		   reach Pricing from the sidebar drawer or the user dropdown. */
+		.navbar .nav-item .btn-primary {
+			display: none !important;
+		}
+		/* Keep the gear/avatar dropdown trigger visible inside the viewport. */
+		.nav-icon.dropdown-toggle,
+		.nav-link.dropdown-toggle {
+			padding: 0.35rem 0.4rem !important;
+		}
+	}
+	</style>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Bootlab">
+
+	<title>MLQ.ai | AI for investors</title>
+	
+
+	<link rel="canonical" href="https://mlq.ai/wp-content/uploads/2023/04/intelligence-driven-computer-network-defense.pdf" />
+	<link rel="shortcut icon" href="/static/landkit/dist/assets/favicon/mlq-favicon-2.png" type="image/x-icon" />
+
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+	<!-- Choose your prefered color scheme -->
+	 <link href="/static/appstack/dist/css/light.css" rel="stylesheet"> 
+	<!---- <link href="/static/appstack/dist/css/dark.css" rel="stylesheet">-->
+	 <link href="/static/appstack/dist/css/style.css" rel="stylesheet">
+	 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+	 <!-- Add Notyf CSS -->
+	
+
+
+	<script>
+		// Increment pageview count
+		let pageviews = localStorage.getItem('pageviews') || 0;
+		pageviews = parseInt(pageviews) + 1;
+		localStorage.setItem('pageviews', pageviews);
+	</script>
+
+	<!-- BEGIN SETTINGS -->
+	
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-VL5F0QG8FG"></script>
+		<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-VL5F0QG8FG');
+		</script>
+	<!-- Twitter conversion tracking base code -->
+	<script>
+		!function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+		},s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
+		a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+		twq('config','og2pf');
+		</script>
+		<!-- End Twitter conversion tracking base code -->
+		<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-EEELN78HS8');
+	</script>
+
+	<!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1610462456450066');
+        fbq('track', 'PageView');
+        </script>
+        <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=676417934704529&ev=PageView&noscript=1"
+        /></noscript>
+        <!-- End Meta Pixel Code -->
+	<!-- END SETTINGS -->
+</head>
+<!--
+  HOW TO USE:
+  data-theme: default (default), dark, light
+  data-layout: fluid (default), boxed
+  data-sidebar-position: left (default), right
+  data-sidebar-behavior: sticky (default), fixed, compact
+-->
+
+
+<body data-theme="light" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky">
+	<div class="wrapper">
+		<div class="sidebar-backdrop" onclick="document.body.classList.remove('sidebar-collapsed')"></div>
+		<nav id="sidebar" class="sidebar">
+			<button type="button" class="sidebar-close" aria-label="Close menu"
+				onclick="document.body.classList.remove('sidebar-collapsed')">&times;</button>
+			<div class="sidebar-content js-simplebar">
+				<a class="sidebar-brand" href="/">
+						<h3 style="color:black;">MLQ.ai</h3></span>
+        		</a>
+
+
+				<ul class="sidebar-nav">
+          
+          <li class="sidebar-item">
+						<a href="/news/" class="sidebar-link">
+							<i class="align-middle" data-feather="rss"></i> <span class="align-middle">News</span>
+						</a>
+					</li>
+          <li class="sidebar-item">
+						<a href="/research/" class="sidebar-link">
+							<i class="align-middle" data-feather="file-text"></i> <span class="align-middle">Research</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a href="/chat/" class="sidebar-link">
+							<i class="align-middle" data-feather="message-circle"></i> <span class="align-middle">Chat</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a href="/stocks/" class="sidebar-link">
+							<i class="align-middle" data-feather="trending-up"></i> <span class="align-middle">Stocks</span>
+						</a>
+					</li>
+          <li class="sidebar-item">
+						<a href="/investors/" class="sidebar-link">
+							<i class="align-middle" data-feather="users"></i> <span class="align-middle">Investors</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a href="/stocks/markets/" class="sidebar-link">
+							<i class="align-middle" data-feather="globe"></i> <span class="align-middle">Markets</span>
+						</a>
+					</li>
+				
+					<li class="sidebar-item">
+						<a href="/etfs/" class="sidebar-link">
+							<i class="align-middle" data-feather="layers"></i> <span class="align-middle">ETFs</span>
+						</a>
+					</li>
+				
+					<li class="sidebar-item">
+						<a href="/stocks/charts/" class="sidebar-link">
+							<i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">Charts</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a href="/stocks/thematic-portfolios/" class="sidebar-link">
+							<i class="align-middle" data-feather="grid"></i> <span class="align-middle">Sectors</span>
+						</a>
+					</li>
+				
+
+					<li class="sidebar-item">
+						<a href="#" class="sidebar-link earnings-toggle" onclick="toggleEarnings(event)">
+							<i class="align-middle" data-feather="pie-chart"></i>
+							<span class="align-middle">Earnings</span>
+							<i class="fas fa-chevron-down earnings-chevron" style="float: right; margin-top: 3px;"></i>
+						</a>
+						<ul id="earnings-menu" class="sidebar-dropdown list-unstyled" style="display: none;">
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/earnings-reports/"><span class="align-middle">Reports</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/earnings-calendar/"><span class="align-middle">Calendar</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/earnings-call-transcripts/"><span class="align-middle">Transcripts</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/earnings/highlights/"><span class="align-middle">Highlights</span></a></li>
+						</ul>
+					</li>
+
+					<li class="sidebar-item">
+						<a href="#" class="sidebar-link calendars-toggle" onclick="toggleCalendars(event)">
+							<i class="align-middle" data-feather="calendar"></i>
+							<span class="align-middle">Calendars</span>
+							<i class="fas fa-chevron-down calendars-chevron" style="float: right; margin-top: 3px;"></i>
+						</a>
+						<ul id="calendars-menu" class="sidebar-dropdown list-unstyled" style="display: none;">
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/earnings-calendar/"><span class="align-middle">Earnings</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/dividends-calendar/"><span class="align-middle">Dividends</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/economic-calendar/"><span class="align-middle">Economic</span></a></li>
+						</ul>
+					</li>
+
+					<li class="sidebar-item">
+						<a href="#" class="sidebar-link data-feeds-toggle" onclick="toggleDataFeeds(event)">
+							<i class="align-middle" data-feather="database"></i>
+							<span class="align-middle">Data Feeds</span>
+							<i class="fas fa-chevron-down data-feeds-chevron" style="float: right; margin-top: 3px;"></i>
+						</a>
+						<ul id="data-feeds-menu" class="sidebar-dropdown list-unstyled" style="display: none;">
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/price-targets/"><span class="align-middle">Price Targets</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/sec-filings/"><span class="align-middle">SEC Filings</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/13f-filings/"><span class="align-middle">13-F Filings</span></a></li>
+							<li class="sidebar-item"><a class="sidebar-link" href="/stocks/congress-trading/"><span class="align-middle">Congress Trading</span></a></li>
+						</ul>
+					</li>
+
+					<li class="sidebar-item">
+						<a href="/tools/download-data/" class="sidebar-link">
+							<i class="align-middle" data-feather="download"></i> <span class="align-middle">Download</span>
+						</a>
+					</li>
+					<!-- <li class="sidebar-item">
+						<a href="/stocks/watchlist/" class="sidebar-link">
+							<i class="align-middle" data-feather="star"></i> <span class="align-middle">Watchlist</span>
+						</a>
+					</li> -->
+					<li class="sidebar-item">
+						<a href="/tools/" class="sidebar-link">
+							<i class="align-middle" data-feather="tool"></i> <span class="align-middle">All Tools</span>
+						</a>
+					</li>
+          <br>
+				</ul>
+				
+
+				
+			<div style="padding: 0 0.75rem 0.75rem; margin-top: auto;">
+				<div style="background-color: #f3f4f6 !important; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.1rem;">
+					<strong style="display: block; font-size: 0.85rem; font-weight: 600; color: #111827 !important; margin-bottom: 0.35rem;">Unlock premium</strong>
+					<span style="display: block; font-size: 0.78rem; color: #6b7280 !important; line-height: 1.45; margin-bottom: 0.85rem;">Data, research, and insights for investors.</span>
+					<a href="/subscriptions/pricing" style="display: block; text-align: center; padding: 0.55rem; background-color: #111827 !important; color: #fff !important; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: none;">Upgrade</a>
+				</div>
+			</div>
+			
+			</div>
+		</nav>
+
+		
+		
+	<div class="main flex-fill">
+		<nav class="navbar navbar-expand navbar-light navbar-bg">
+			<a class="sidebar-toggle" onclick="event.preventDefault(); document.body.classList.toggle('sidebar-collapsed');">
+				<i class="hamburger align-self-center"></i>
+			</a>
+
+		<!-- Enhanced Search Bar -->
+		<div class="search-bar-container" style="flex: 1 1 auto !important; width: 100%;">
+			<div class="search-wrapper-nav" style="width: 100%;">
+					<div class="search-icon-nav">
+						<i class="fas fa-search"></i>
+					</div>
+					<input id="srh-inp" type="text" class="search-input-nav" placeholder="Search 50,000+ companies..." aria-label="Search">
+					<div class="search-filters">
+						<button class="search-filter-btn active" data-filter="all">All</button>
+						<button class="search-filter-btn" data-filter="stocks">Stocks</button>
+						<button class="search-filter-btn" data-filter="etfs">ETFs</button>
+					</div>
+				</div>
+		</div>
+
+			<div class="navbar-collapse collapse">
+				<ul class="navbar-nav navbar-align">
+					<li class="nav-item" style="padding-top:5px;">
+						
+							<!-- If the user is not logged in, show the Upgrade button -->
+							<a href="/subscriptions/pricing/" type="button" class="btn btn-primary">Upgrade</a>
+						
+						&nbsp;
+					</li>
+						<li class="nav-item dropdown">
+							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                <i class="align-middle" data-feather="settings"></i>
+              </a>
+
+							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+              <!--  <img src="" class="avatar img-fluid rounded-circle me-1" alt="Chris Wood" /> -->
+								<span class="text-dark"><i class="align-middle me-1" data-feather="user"></i> </span>
+              </a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="/accounts/my-account/"></i>My Profile</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="/subscriptions/pricing/">Pricing</a>
+								<a class="dropdown-item" href="/cdn-cgi/l/email-protection#abd8dedbdbc4d9dfebc6c7da85cac2">Support</a>
+								<a class="dropdown-item" href="/accounts/logout/">Sign out</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			
+
+<body data-theme="dark" data-layout="fluid" data-sidebar-position="left" data-sidebar-behavior="sticky" data-new-gr-c-s-check-loaded="14.1001.0" data-gr-ext-installed="" cz-shortcut-listen="true">
+	<div class="main d-flex justify-content-center w-100">
+		<main class="content d-flex p-0">
+			<div class="container d-flex flex-column">
+				<div class="row h-100">
+					<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+						<div class="d-table-cell align-middle">
+
+							<div class="text-center">
+								<h1 class="display-1 font-weight-bold">404</h1>
+								<p class="h1">Page not found.</p>
+								<p font-weight-normal mt-3 mb-4">The page you are looking for might have been removed.</p>
+								<a href="/stocks/" class="btn btn-primary btn-lg">Return to website</a>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/app.js"></script><div class="notyf"></div><div class="notyf-announcer" aria-atomic="true" aria-live="polite" style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; outline: 0px;"></div>
+
+
+
+<!-- <div class="settings js-settings">
+  <div class="settings-toggle">
+    <div class="settings-toggle-option settings-toggle-option-text js-settings-toggle" title="Theme Builder">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sliders align-middle"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+      Builder
+    </div>
+    <a class="settings-toggle-option" title="Documentation" href="docs-introduction.html" target="_blank">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open align-middle"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+    </a>
+  </div>
+
+  <div class="settings-panel">
+    <div class="settings-content">
+      <div class="settings-title">
+        <button type="button" class="close float-right js-settings-toggle" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <h4 class="mb-0 d-inline-block">Theme Builder</h4>
+      </div>
+
+      <div class="settings-body">
+
+      <div class="alert alert-primary" role="alert">
+        <div class="alert-message">
+          <strong>Hey there!</strong> Set your own customized style below. Choose the ones that best fits your needs.
+        </div>
+      </div>
+
+        <div class="mb-3">
+          <span class="d-block font-size-lg font-weight-bold">Color scheme</span>
+          <span class="d-block text-muted mb-2">The perfect color mode for your app.</span>
+
+          <div class="row no-gutters text-center mx-n1 mb-2">
+            <div class="col">
+              <label class="mx-1 d-block mb-1" data-children-count="1">
+                <input class="settings-scheme-label" type="radio" name="theme" value="default">
+                <div class="settings-scheme">
+                  <div class="settings-scheme-theme settings-scheme-theme-default"></div>
+                </div>
+              </label>
+              Default
+            </div>
+            <div class="col">
+              <label class="mx-1 d-block mb-1" data-children-count="1">
+                <input class="settings-scheme-label" type="radio" name="theme" value="colored">
+                <div class="settings-scheme">
+                  <div class="settings-scheme-theme settings-scheme-theme-colored"></div>
+                </div>
+              </label>
+              Colored
+            </div>
+          </div>
+          <div class="row no-gutters text-center mx-n1">
+            <div class="col">
+              <label class="mx-1 d-block mb-1" data-children-count="1">
+                <input class="settings-scheme-label" type="radio" name="theme" value="dark">
+                <div class="settings-scheme">
+                  <div class="settings-scheme-theme settings-scheme-theme-dark"></div>
+                </div>
+              </label>
+              Dark
+            </div>
+            <div class="col">
+              <label class="mx-1 d-block mb-1" data-children-count="1">
+                <input class="settings-scheme-label" type="radio" name="theme" value="light">
+                <div class="settings-scheme">
+                  <div class="settings-scheme-theme settings-scheme-theme-light"></div>
+                </div>
+              </label>
+              Light
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <span class="d-block font-size-lg font-weight-bold">Sidebar position</span>
+          <span class="d-block text-muted mb-2">Toggle the position of the sidebar.</span>
+
+          <div>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="sidebarPosition" value="left">
+              <div class="settings-button">
+                Left
+              </div>
+            </label>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="sidebarPosition" value="right">
+              <div class="settings-button">
+                Right
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <span class="d-block font-size-lg font-weight-bold">Sidebar behavior</span>
+          <span class="d-block text-muted mb-2">Change the behavior of the sidebar.</span>
+
+          <div>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="sidebarBehavior" value="sticky">
+              <div class="settings-button">
+                Sticky
+              </div>
+            </label>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="sidebarBehavior" value="fixed">
+              <div class="settings-button">
+                Fixed
+              </div>
+            </label>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="sidebarBehavior" value="compact">
+              <div class="settings-button">
+                Compact
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+          <span class="d-block font-size-lg font-weight-bold">Layout</span>
+          <span class="d-block text-muted mb-2">Toggle container layout system.</span>
+
+          <div>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="layout" value="fluid">
+              <div class="settings-button">
+                Fluid
+              </div>
+            </label>
+            <label data-children-count="1">
+              <input class="settings-button-label" type="radio" name="layout" value="boxed">
+              <div class="settings-button">
+                Boxed
+              </div>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="settings-footer">
+        <a class="btn btn-primary btn-lg btn-block" href="https://themes.getbootstrap.com/product/appstack-responsive-admin-template/" target="_blank">Purchase</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+<svg id="SvgjsSvg1001" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;"><defs id="SvgjsDefs1002"></defs><polyline id="SvgjsPolyline1003" points="0,0"></polyline><path id="SvgjsPath1004" d="M0 0 "></path></svg><iframe name="_hjRemoteVarsFrame" title="_hjRemoteVarsFrame" id="_hjRemoteVarsFrame" src="https://vars.hotjar.com/box-469cf41adb11dc78be68c1ae7f9457a4.html" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe>-->
+</body>
+
+
+
+		  <!-- Ezoic Ad Placement - Bottom of Content -->
+
+		  <!-- Move the popup outside of the content block -->
+		  <div id="premium-popup" class="popup" style="display: none;">
+        <div class="popup-content">
+          <h2>Upgrade to Premium</h2>
+          <p>You've reached the free limit. Upgrade to premium for unlimited access.</p>
+          
+          <button onclick="window.location.href='/subscriptions/pricing/'" class="pricing-button">Explore plans</button>
+          <!-- <button onclick="closePopup('premium-popup')" class="close-popup">&times;</button> -->
+        </div>
+
+		</div>
+          <!-- ADD THIS SIGNUP POPUP -->
+<div id="signup-popup" class="popup" style="display: none;">
+	<div class="popup-content">
+		<h2>Free Account Required</h2>
+		<p>Create a free account to continue accessing the data.</p>
+		
+		<button onclick="window.location.href='/accounts/register/'" class="pricing-button">Sign Up Free</button>
+		<button onclick="closePopup('signup-popup')" class="close-popup">&times;</button>
+	</div>
+</div>
+
+<!-- Affiliate Campaign Popup: base_stocks_popup -->
+<!-- 
+<div id="sponsor-popup" class="sponsored-placement" data-placement="base_stocks_popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(2px);">
+    <div style="position:relative; background:#fff; border-radius:16px; max-width:520px; width:90%; max-height:90vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.3); animation: sponsorPopIn 0.3s ease-out;">
+        <button onclick="closeSponsorPopup()" style="position:absolute; top:12px; right:16px; background:rgba(0,0,0,0.5); border:none; font-size:20px; color:#fff; cursor:pointer; z-index:10; line-height:1; width:32px; height:32px; border-radius:50; display:flex; align-items:center; justify-content:center; border-radius:50%;">&times;</button>
+        <a href="https://adly.news/api/track/rbx4Uag12r0" target="_blank" rel="noopener" class="sponsored-cta-link" style="display:block;">
+            <img src="https://adly-news.s3.amazonaws.com/creative-assets/1773451208031-ajnv69.png" alt="Golden Retirement Accounts" style="width:100%; height:auto; display:block; border-radius:16px 16px 0 0;" />
+        </a>
+        <div style="padding:20px 24px 24px;">
+            <p style="color:#9ca3af; font-size:10px; text-transform:uppercase; letter-spacing:0.5px; margin:0 0 10px 0;">Sponsored</p>
+            <h3 style="margin:0 0 12px 0; font-size:20px; font-weight:700; line-height:1.3; color:#111827;">Iran War Triggers Rush to IRS-Approved "Golden Retirement" Accounts</h3>
+            <p style="font-size:14px; line-height:1.6; color:#374151; margin:0 0 8px 0;">Markets react unpredictably during conflicts — millions of investors are moving retirement funds into gold for safety.</p>
+            <p style="font-size:14px; line-height:1.6; color:#374151; margin:0 0 16px 0;">A little-known IRS-approved program lets you move your 401(k), IRA, or TSP into gold without taxes or penalties.</p>
+            <a href="https://adly.news/api/track/rbx4Uag12r0" target="_blank" rel="noopener" class="sponsored-cta-link" style="display:block; text-align:center; background:#f97316; color:white; padding:14px 28px; text-decoration:none; border-radius:8px; font-weight:600; font-size:15px;">Read The Free Report</a>
+        </div>
+    </div>
+</div>
+<style>
+@keyframes sponsorPopIn {
+    from { opacity:0; transform:scale(0.95) translateY(10px); }
+    to { opacity:1; transform:scale(1) translateY(0); }
+}
+</style>
+<script>
+function closeSponsorPopup() {
+    document.getElementById('sponsor-popup').style.display = 'none';
+    sessionStorage.setItem('sponsor_popup_dismissed', '1');
+}
+(function() {
+    if (sessionStorage.getItem('sponsor_popup_dismissed')) return;
+    setTimeout(function() {
+        var popup = document.getElementById('sponsor-popup');
+        if (!popup) return;
+        popup.style.display = 'flex';
+        // Track impression
+        fetch('/sponsor/track/placement/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({placement: 'base_stocks_popup', event: 'impression', page: window.location.pathname})
+        }).catch(function(){});
+        // Track clicks
+        popup.querySelectorAll('.sponsored-cta-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                fetch('/sponsor/track/placement/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({placement: 'base_stocks_popup', event: 'click', page: window.location.pathname})
+                }).catch(function(){});
+            });
+        });
+    }, 8000);
+})();
+</script>
+ -->
+
+		
+		 
+
+
+
+
+
+
+
+
+
+
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row text-muted">
+						<div class="col-6 text-start">
+							<ul class="list-inline">
+								<li class="list-inline-item">
+									<a class="text-muted" href="/contact">Contact</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="https://blog.mlq.ai/disclaimer">Disclaimer</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="https://blog.mlq.ai/privacy-policy">Privacy</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="https://blog.mlq.ai/terms-of-service">Terms of Service</a>
+								</li>
+							</ul>
+						</div>
+						<div class="col-6 text-end">
+							<p class="mb-0">
+								<span class="text-muted">&copy; 2026</span> - <a href="https://www.mlq.ai/" class="text-muted">MLQ.ai</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+		  const dropdownToggles = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+	  
+		  dropdownToggles.forEach(function(toggle) {
+			toggle.addEventListener('click', function(event) {
+			  console.log('Dropdown clicked:', event.target);
+			});
+		  });
+		});
+	  </script>
+	  	  
+<script src="/static/appstack/dist/js/app.js"></script>
+
+	<!-- jQuery 3 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.min.js"></script>
+<!-- fullscreen -->
+<script src="/static/vendor_components/screenfull/screenfull.js"></script>
+
+<!-- jQuery UI 1.11.4 -->
+<script src="/static/vendor_components/jquery-ui/jquery-ui.js"></script>
+
+
+
+<!-- Slimscroll -->
+<script src="/static/vendor_components/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+<!-- FastClick -->
+
+<!-- Bootstrap WYSIHTML5 -->
+<script src="/static/vendor_plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.js"></script>
+
+<!-- webticker -->
+<script src="/static/vendor_components/Web-Ticker-master/jquery.webticker.min.js"></script>
+
+
+<!-- This is data table -->
+<script src="/static/vendor_components/datatable/datatables.min.js"></script>
+
+<!-- Crypto Admin App 
+<script src="/static/js/template.js"></script> -->
+
+
+
+<!-- Bootstrap 5 JS - must be before dropdown initialization -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+	function closePopup(popupId) {
+		document.getElementById(popupId).style.display = 'none';
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		console.log('DOM loaded, checking popups...');
+		
+		// Debug the signup popup
+		console.log('show_signup_popup value:', 'False');
+		const signupElement = document.getElementById('signup-popup');
+		console.log('signup popup element found:', signupElement);
+		
+		
+		
+		
+	});
+</script>
+
+<!-- Add Notyf JS -->
+<script defer data-domain="mlq.ai" src="https://plausible.io/js/script.js"></script>
+
+<script>
+    // Initialize Bootstrap 5 dropdowns properly
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all dropdowns with Bootstrap 5
+        var dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+        var dropdownList = dropdownElementList.map(function(dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
+        });
+        
+        // Prevent Bootstrap 4 from interfering with Bootstrap 5 dropdowns
+        $('[data-bs-toggle="dropdown"]').on('click', function(e) {
+            e.stopPropagation();
+            // Ensure the dropdown menu is shown
+            var dropdownMenu = this.nextElementSibling;
+            if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                dropdownMenu.classList.add('show');
+            }
+        });
+        
+        // Handle filter buttons
+        var currentFilter = 'all';
+        
+        $('.search-filter-btn').on('click', function() {
+            $('.search-filter-btn').removeClass('active');
+            $(this).addClass('active');
+            currentFilter = $(this).data('filter');
+            
+            // Re-trigger search if there's text
+            var currentValue = $('#srh-inp').val();
+            if (currentValue) {
+                $('#srh-inp').autocomplete('search', currentValue);
+            }
+        });
+        
+        // Set up the autocomplete with custom source and rendering
+        $('#srh-inp').autocomplete({
+            minLength: 1,
+            source: function(request, response) {
+                $.ajax({
+                    url: '/stocks/search_ticker_api/',
+                    data: { term: request.term },
+                    success: function(data) {
+                        console.log('Current filter:', currentFilter);
+                        console.log('Raw data:', data);
+                        
+                        var filteredData = data;
+                        
+                        // Apply filter based on active button
+                        if (currentFilter === 'stocks') {
+                            filteredData = data.filter(function(item) {
+                                return !item.is_etf && !item.is_ai;
+                            });
+                            console.log('Filtered stocks:', filteredData);
+                        } else if (currentFilter === 'etfs') {
+                            filteredData = data.filter(function(item) {
+                                return item.is_etf && !item.is_ai;
+                            });
+                            console.log('Filtered ETFs:', filteredData);
+                        }
+                        // For 'all', show everything (no filtering needed)
+                        
+                        // Add AI option at the end if there are results
+                        if (filteredData.length > 0 && filteredData.length < 10 && !filteredData.some(d => d.is_ai)) {
+                            filteredData.push({
+                                id: 'ai-search',
+                                label: 'Ask AI about "' + request.term + '"',
+                                value: request.term,
+                                is_ai: true
+                            });
+                        } else if (filteredData.length === 0) {
+                            // If no results at all, only show AI option
+                            filteredData.push({
+                                id: 'ai-search',
+                                label: 'Ask AI about "' + request.term + '"',
+                                value: request.term,
+                                is_ai: true
+                            });
+                        }
+                        
+                        response(filteredData);
+                    }
+                });
+            },
+            select: function(event, ui) {
+                event.preventDefault();
+                
+                // Check if it's an AI search option
+                if (ui.item.is_ai) {
+                    window.location.href = '/chat/?q=' + encodeURIComponent(ui.item.value);
+                } else {
+                    window.location.href = '/stocks/' + ui.item.value + '/';
+                }
+            }
+        }).data('ui-autocomplete')._renderItem = function(ul, item) {
+            // Custom HTML for each search result
+            if (item.is_ai) {
+                // AI search option
+                return $('<li>')
+                    .append('<a class="search-ai-option"><i class="fas fa-robot"></i>' + item.label + '</a>')
+                    .appendTo(ul);
+            } else {
+                // Regular stock/ETF result
+                var badgeText = item.is_etf ? 'ETF' : 'Equity';
+                
+                var logoUrl = 'https://images.financialmodelingprep.com/symbol/' + item.value + '.png';
+                
+                var html = '<a>' +
+                    '<div class="search-result-main">' +
+                        '<div class="search-result-logo">' +
+                            '<img src="' + logoUrl + '" alt="' + item.value + '" ' +
+                                'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'flex\';">' +
+                            '<i class="fas fa-building" style="display: none;"></i>' +
+                        '</div>' +
+                        '<div class="search-result-text">' +
+                            '<div class="search-result-row">' +
+                                '<span class="search-result-symbol">' + item.value + '</span>' +
+                                '<span class="search-result-name">' + item.name + '</span>' +
+                            '</div>' +
+                            '<div class="search-result-exchange">' + item.exchange + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="search-result-meta">' +
+                        '<span class="search-badge">' + badgeText + '</span>' +
+                    '</div>' +
+                '</a>';
+                
+                return $('<li>').append(html).appendTo(ul);
+            }
+        };
+
+        // Handle pressing Enter in the input field
+        $('#srh-inp').keypress(function(event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if (keycode == '13') { // Check for Enter key
+                event.preventDefault(); // Prevent the default behavior
+                var ticker = $('#srh-inp').val();
+                if(ticker) {
+                    // Construct the URL and redirect
+                    window.location.href = '/stocks/' + ticker + '/';
+                } else {
+                    alert('Please enter a ticker symbol.');
+                }
+            }
+        });
+
+        // Handle form submission for older browsers
+        $('#search-form').on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            var ticker = $('#srh-inp').val();
+            
+            if(ticker) {
+                // Construct the URL and redirect
+                window.location.href = '/stocks/' + ticker + '/';
+            } else {
+                // Optionally handle the case where the input is empty
+                alert('Please enter a ticker symbol.');
+            }
+        });
+    });
+
+
+
+
+				
+
+
+   
+
+      $(function() {
+        $('#company_profile_link').click(function() {
+          var ticker = $('#srh-inp').val()
+          window.location.href = '/stocks/' + ticker;
+        })
+        $('#report_financials').click(function() {
+          var ticker = $('#srh-inp').val()
+          window.location.href = '/stocks/financials/' + ticker;
+        })
+        $('#watchlist').click(function() {
+          var ticker = $('#srh-inp').val()
+          window.location.href = '/stocks/watchlist-equities/'
+        })
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const tickerParam = urlParams.get('ticker');
+        if (tickerParam) {
+          $('#srh-inp').val(tickerParam);
+        }
+
+
+
+});
+
+$(document).ready(function() {
+  // This will get the current path
+  var path = window.location.pathname;
+
+  // Check if the path contains the word 'stocks'
+  if (path.includes('/stocks')) {
+    $('a.nav-link:contains("Stocks")').addClass('active');
+  } else if (path.includes('/startups')) {
+    // Check if the path contains the word 'startups'
+    $('a.nav-link:contains("Startups")').addClass('active');
+  }
+  // Add more conditions as needed for other nav items
+});
+
+
+</script>
+<script>
+// Manual Sidebar Accordion Control V5 (Correct Hide/Show + Accordion)
+document.addEventListener('DOMContentLoaded', function() {
+    // Delay slightly to ensure app.js might have finished setup
+    setTimeout(function() {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+
+        const allCollapseElements = sidebar.querySelectorAll('.sidebar-dropdown.collapse');
+        console.log(`Sidebar V5 script running. Found ${allCollapseElements.length} collapse elements.`);
+
+        sidebar.addEventListener('click', function(event) {
+            const clickedToggle = event.target.closest('.sidebar-link[data-bs-toggle="collapse"]');
+
+            if (clickedToggle) {
+                event.preventDefault();
+                event.stopPropagation(); // Stop event here
+
+                const targetId = clickedToggle.getAttribute('href') || clickedToggle.getAttribute('data-bs-target');
+                if (!targetId) return;
+
+                const targetElement = document.querySelector(targetId);
+                if (!targetElement) return;
+
+                const targetInstance = bootstrap.Collapse.getOrCreateInstance(targetElement);
+                const isTargetCurrentlyExpanded = targetElement.classList.contains('show');
+
+                console.log(`Clicked ${targetId}. Currently Expanded: ${isTargetCurrentlyExpanded}`);
+
+                // --- Accordion Logic: Hide all OTHER shown elements FIRST ---
+                allCollapseElements.forEach(el => {
+                    // Check if it's a different element and if it's currently shown
+                    if (el !== targetElement && el.classList.contains('show')) {
+                        const instance = bootstrap.Collapse.getInstance(el);
+                        if (instance) {
+                            console.log(`Hiding sibling: ${el.id}`);
+                            instance.hide(); // Tell Bootstrap to hide it
+                        }
+                    }
+                });
+                // --- End Accordion Logic ---
+
+                // --- Toggle the clicked element AFTER handling siblings ---
+                if (isTargetCurrentlyExpanded) {
+                    // If it was open, hide it
+                    console.log(`Manually HIDING clicked target: ${targetId}`);
+                    targetInstance.hide();
+                } else {
+                    // If it was closed, show it
+                    console.log(`Manually SHOWING clicked target: ${targetId}`);
+                    targetInstance.show();
+                }
+                // --- End Toggle Logic ---
+            }
+        });
+        // --- Active State Handling ---
+        const currentPath = window.location.pathname;
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            
+            // Remove any existing active classes first
+            link.classList.remove('active');
+            const parentItem = link.closest('.sidebar-item');
+            if (parentItem) {
+                parentItem.classList.remove('active');
+            }
+            
+            // Exact match for root stocks page
+            if (currentPath === '/stocks/' && href === '/stocks/') {
+                link.classList.add('active');
+                if (parentItem) {
+                    parentItem.classList.add('active');
+                }
+            }
+            // Exact match for AI stocks page
+            else if (currentPath === '/stocks/ai/' && href === '/stocks/ai/') {
+                link.classList.add('active');
+                if (parentItem) {
+                    parentItem.classList.add('active');
+                }
+            }
+            // Exact match for other pages
+            else if (currentPath === href) {
+                link.classList.add('active');
+                if (parentItem) {
+                    parentItem.classList.add('active');
+                }
+            }
+        });
+        
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+        // --- End Active State Handling ---
+
+    }, 150); // Keep delay
+});
+</script>
+
+<style>
+    :root {
+      --primary: #00008b;
+      --success: #2ec946;
+      --info: #3bc9db;
+      --warning: #fcc419;
+    }
+    
+    p {
+      font-size: 1rem;
+      color: #1a1a1a;
+    }
+    
+    .btn-primary {
+      background-color: #111827;
+      border-color: #111827;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 1.1rem;
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+    
+    .search-container {
+      background: white;
+      border-radius: 12px;
+    }
+    
+    .stat-card {
+      border-radius: 12px;
+      transition: transform 0.2s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .bg-primary-soft { background: rgba(67, 97, 238, 0.1); }
+    .bg-success-soft { background: rgba(46, 201, 70, 0.1); }
+    .bg-info-soft { background: rgba(59, 201, 219, 0.1); }
+    .bg-warning-soft { background: rgba(252, 196, 25, 0.1); }
+    
+    .filter-container .btn {
+      font-weight: 500;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid #e9ecef;
+    }
+    
+    .filter-container .btn:hover {
+      background: #f8f9fa;
+      border-color: #dee2e6;
+    }
+    
+    .gap-3 {
+      gap: 1rem !important;
+    }
+
+    /* Add this to your style section in base-stocks.html */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin-top: 0;
+  color: #00008b;
+}
+
+.pricing-button {
+  background-color: #00008b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.pricing-button:hover {
+  background-color: #000066;
+}
+
+.close-popup {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+    
+    /* Header Card */
+    .header-card {
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .header-icon {
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Logo Styling */
+    .company-logo-container {
+      width: 80px;
+      height: 80px;
+      min-width: 80px; /* Prevents shrinking */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .company-logo {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .company-logo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(67, 97, 238, 0.1);
+    }
+    
+    .company-card {
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .company-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    
+    .company-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .company-tagline {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .funding-date {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+    }
+    
+    .stage-badge {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .funding-value {
+      color: #2d3436;
+      font-size: 1.1rem;
+    }
+    
+    .gap-3 {
+      gap: 1rem;
+    }
+    
+    /* Add to your existing styles */
+    .container-fluid {
+      padding-left: 0.01rem;
+      padding-right: 0.01rem;
+    }
+    
+    @media (min-width: 1600px) {
+      .container-fluid {
+        padding-left: 0.01rem;
+        padding-right: 0.01rem;
+      }
+    }
+    
+    .form-check-input.company-checkbox {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+      border-color: #e2e8f0;
+      margin-top: 0.25rem;
+    }
+    
+    .form-check-input.company-checkbox:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .form-check-input.company-checkbox:hover {
+      border-color: var(--primary);
+    }
+    
+    /* Remove card hover transform when clicking checkbox */
+    .company-card .checkbox-container {
+      z-index: 2;
+    }
+    
+    .company-card a {
+      color: inherit;
+    }
+    
+    .company-card a:hover {
+      color: inherit;
+    }
+    
+    /* Add to your existing styles */
+    .tech-stack-menu {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .tech-stack-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .tech-stack-menu::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    .tech-stack-menu::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+    
+    .tech-stack-menu::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    /* Add to your existing styles */
+    .industry-menu {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .industry-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .industry-menu::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    .industry-menu::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+    
+    .industry-menu::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+    /* Dropdown styling */
+    .dropdown {
+      position: relative !important;
+    }
+    
+    .dropdown-menu {
+      top: 100% !important;
+      left: 0 !important;
+      margin-top: 10px !important;
+      position: absolute !important;
+      transform: none !important;
+      will-change: auto !important;
+      border: none !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      min-width: 200px;
+      z-index: 1050 !important;
+      padding: 0.5rem;
+      max-width: 280px !important;
+      overflow-x: hidden;
+    }
+    
+    .dropdown-item {
+      white-space: normal;
+      word-wrap: break-word;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 2px;
+      color: #4a5568;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .dropdown-item.active {
+      background-color: var(--primary) !important;
+      color: white !important;
+    }
+    
+    .dropdown-divider {
+      margin: 0.5rem 0;
+      border-color: #e9ecef;
+    }
+    
+    /* Fix dropdown position */
+    .filter-container {
+      position: relative;
+      z-index: 1020;
+    }
+    
+    .filter-container .dropdown-toggle {
+      position: relative;
+    }
+    
+    .filter-container .dropdown-toggle::after {
+      margin-left: 0.5em;
+      vertical-align: 0.15em;
+    }
+    
+    /* Scrollable menus */
+    .industry-menu,
+    .tech-stack-menu {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    /* Add hover effect for dropdown items */
+    .dropdown-item:hover:not(.active) {
+      background-color: #f8f9fa !important;
+      color: #1f2937 !important;
+    }
+    
+    /* Add this to ensure empty dropdowns still display properly */
+    .dropdown-menu:empty {
+      min-height: 50px;
+      display: block;
+    }
+    
+    /* No unnecessary padding */
+    .bulk-actions {
+      border-radius: 12px;
+    }
+    
+    .bulk-actions .form-check-input {
+      width: 1.25rem;
+      height: 1.25rem;
+      cursor: pointer;
+    }
+    
+    #selectedCount {
+      font-size: 0.9rem;
+    }
+    
+    #exportButton:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .list-card {
+      transition: transform 0.2s;
+      border-radius: 12px;
+    }
+
+    .list-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .badge {
+      font-size: 0.8rem;
+      padding: 0.5em 0.8em;
+    }
+</style>
+
+
+
+
+
+<script>
+// Simple earnings toggle function
+function toggleEarnings(event) {
+    event.preventDefault();
+    const menu = document.getElementById('earnings-menu');
+    const chevron = document.querySelector('.earnings-chevron');
+    
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        menu.style.display = 'none';
+        chevron.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Simple calendars toggle function
+function toggleCalendars(event) {
+    event.preventDefault();
+    const menu = document.getElementById('calendars-menu');
+    const chevron = document.querySelector('.calendars-chevron');
+    
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        menu.style.display = 'none';
+        chevron.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Simple data feeds toggle function
+function toggleDataFeeds(event) {
+    event.preventDefault();
+    const menu = document.getElementById('data-feeds-menu');
+    const chevron = document.querySelector('.data-feeds-chevron');
+    
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        chevron.style.transform = 'rotate(180deg)';
+    } else {
+        menu.style.display = 'none';
+        chevron.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+
+<style>
+.growth-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #111;
+    color: #fff;
+    padding: 14px 24px;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    box-shadow: 0 -2px 20px rgba(0,0,0,0.15);
+}
+.growth-bar.visible { display: flex; }
+.growth-bar-text { font-size: 0.9rem; font-weight: 500; white-space: nowrap; }
+.growth-bar-text span { color: #999; font-weight: 400; margin-left: 6px; font-size: 0.82rem; }
+.growth-bar-form { display: flex; gap: 8px; align-items: center; }
+.growth-bar-input {
+    padding: 8px 14px;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 0.85rem;
+    width: 240px;
+    outline: none;
+}
+.growth-bar-input:focus { border-color: #555; }
+.growth-bar-input::placeholder { color: #666; }
+.growth-bar-btn {
+    padding: 8px 20px;
+    background: #fff;
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.growth-bar-btn:hover { background: #e5e5e5; }
+.growth-bar-close {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+.growth-bar-close:hover { color: #fff; }
+.growth-bar-success { color: #4ade80; font-size: 0.85rem; font-weight: 500; }
+@media (max-width: 768px) {
+    /* On mobile the bottom bar is cramped and overlaps content.
+       Suppress it entirely — the modal-popup version still appears. */
+    .growth-bar,
+    .growth-bar.visible { display: none !important; }
+}
+</style>
+
+
+<div class="growth-bar" id="growthBar"
+     data-ticker=""
+     data-offer-id=""
+     data-offer-url="">
+    <div class="growth-bar-text" id="growthBarText">
+        
+        Get AI and market research<span>Join 6,000+ investors</span>
+        
+    </div>
+    <div class="growth-bar-form" id="growthBarForm">
+        <input type="email" class="growth-bar-input" id="growthBarEmail" placeholder="Enter your email" autocomplete="email">
+        <button class="growth-bar-btn" id="growthBarBtn">Subscribe</button>
+    </div>
+    <button class="growth-bar-close" id="growthBarClose">&times;</button>
+</div>
+
+<script>
+(function() {
+    var bar = document.getElementById('growthBar');
+    var form = document.getElementById('growthBarForm');
+    var input = document.getElementById('growthBarEmail');
+    var btn = document.getElementById('growthBarBtn');
+    var closeBtn = document.getElementById('growthBarClose');
+    var textEl = document.getElementById('growthBarText');
+    var ticker = bar.getAttribute('data-ticker');
+    var offerId = bar.getAttribute('data-offer-id');
+    var offerUrl = bar.getAttribute('data-offer-url');
+
+    var DISMISS_KEY = 'growth_bar_dismissed';
+    var SIGNUP_KEY = 'growth_bar_signed_up';
+
+    var dismissed = localStorage.getItem(DISMISS_KEY);
+    if (dismissed && (Date.now() - parseInt(dismissed)) < 7 * 86400000) return;
+    var signedUp = localStorage.getItem(SIGNUP_KEY);
+    if (signedUp && (Date.now() - parseInt(signedUp)) < 30 * 86400000) return;
+
+    setTimeout(function() { bar.classList.add('visible'); }, 5000);
+
+    closeBtn.addEventListener('click', function() {
+        bar.classList.remove('visible');
+        localStorage.setItem(DISMISS_KEY, Date.now().toString());
+    });
+
+    btn.addEventListener('click', function() {
+        var email = input.value.trim();
+        if (!email || !email.includes('@')) {
+            input.style.borderColor = '#ef4444';
+            return;
+        }
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        fetch('/growth/capture/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: email,
+                offer_id: offerId || null,
+                ticker: ticker || null,
+                source_page: window.location.pathname,
+            })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                localStorage.setItem(SIGNUP_KEY, Date.now().toString());
+                var reportLink = data.report_url || offerUrl;
+                if (reportLink) {
+                    form.innerHTML = '<span class="growth-bar-success">Check your inbox!</span>';
+                    textEl.innerHTML = 'Your report is ready &mdash; <a href="' + reportLink + '" style="color:#fff;text-decoration:underline;">View now</a>';
+                } else {
+                    form.innerHTML = '<span class="growth-bar-success">You\'re in!</span>';
+                    textEl.textContent = "We'll send you our latest research.";
+                }
+                setTimeout(function() { bar.classList.remove('visible'); }, 8000);
+            } else {
+                btn.textContent = 'Try again';
+                btn.disabled = false;
+            }
+        })
+        .catch(function() {
+            btn.textContent = 'Try again';
+            btn.disabled = false;
+        });
+    });
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') btn.click();
+    });
+})();
+</script>
+
+
+
+<style>
+.growth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+.growth-overlay.visible { display: flex; }
+.growth-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 36px;
+    max-width: 420px;
+    width: 90%;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.growth-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+}
+.growth-modal-close:hover { color: #333; }
+.growth-modal-badge {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+}
+.growth-modal h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+.growth-modal p {
+    font-size: 0.88rem;
+    color: #666;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+.growth-modal-form { display: flex; flex-direction: column; gap: 10px; }
+.growth-modal-input {
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+.growth-modal-input:focus { border-color: #111; }
+.growth-modal-btn {
+    padding: 12px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+.growth-modal-btn:hover { background: #333; }
+.growth-modal-fine {
+    font-size: 0.72rem;
+    color: #bbb;
+    text-align: center;
+    margin-top: 10px;
+}
+.growth-modal-success { text-align: center; }
+.growth-modal-success h3 { color: #111; font-size: 1.1rem; margin: 0 0 6px 0; }
+.growth-modal-success p { color: #666; font-size: 0.85rem; }
+</style>
+
+<div class="growth-overlay" id="growthModal"
+     data-offer-id=""
+     data-offer-url=""
+     data-ticker="">
+    <div class="growth-modal">
+        <button class="growth-modal-close" id="growthModalClose">&times;</button>
+        <div id="growthModalContent">
+            <div class="growth-modal-badge">Research</div>
+            
+            <h2>Get AI and market research</h2>
+            <p>In-depth analysis on the companies driving the AI revolution. Delivered to your inbox.</p>
+            
+            <div class="growth-modal-form">
+                <input type="email" class="growth-modal-input" id="growthModalEmail" placeholder="Enter your email" autocomplete="email">
+                <button class="growth-modal-btn" id="growthModalBtn">Send Me the Research</button>
+            </div>
+            <div class="growth-modal-fine">No spam. Unsubscribe anytime.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var overlay = document.getElementById('growthModal');
+    var closeBtn = document.getElementById('growthModalClose');
+    var input = document.getElementById('growthModalEmail');
+    var btn = document.getElementById('growthModalBtn');
+    var content = document.getElementById('growthModalContent');
+    var offerId = overlay.getAttribute('data-offer-id');
+    var offerUrl = overlay.getAttribute('data-offer-url');
+    var ticker = overlay.getAttribute('data-ticker');
+
+    var DISMISS_KEY = 'growth_modal_dismissed';
+    var SIGNUP_KEY = 'growth_modal_signed_up';
+
+    // Don't show if dismissed in last 3 days or signed up in last 30
+    var dismissed = localStorage.getItem(DISMISS_KEY);
+    if (dismissed && (Date.now() - parseInt(dismissed)) < 3 * 86400000) return;
+    var signedUp = localStorage.getItem(SIGNUP_KEY);
+    if (signedUp && (Date.now() - parseInt(signedUp)) < 30 * 86400000) return;
+
+    // Also skip if already signed up via bottom bar
+    if (localStorage.getItem('growth_bar_signed_up')) return;
+
+    var shown = false;
+    function showModal() {
+        if (shown) return;
+        shown = true;
+        overlay.classList.add('visible');
+    }
+
+    // Show after 15 seconds
+    var timer = setTimeout(showModal, 15000);
+
+    // Or after 50% scroll
+    function checkScroll() {
+        var scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+        if (scrollPercent > 0.5) {
+            showModal();
+            window.removeEventListener('scroll', checkScroll);
+        }
+    }
+    window.addEventListener('scroll', checkScroll);
+
+    function closeModal() {
+        overlay.classList.remove('visible');
+        localStorage.setItem(DISMISS_KEY, Date.now().toString());
+        clearTimeout(timer);
+        window.removeEventListener('scroll', checkScroll);
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeModal();
+    });
+
+    btn.addEventListener('click', function() {
+        var email = input.value.trim();
+        if (!email || !email.includes('@')) {
+            input.style.borderColor = '#ef4444';
+            return;
+        }
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        fetch('/growth/capture/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                email: email,
+                offer_id: offerId || null,
+                ticker: ticker || null,
+                source_page: window.location.pathname,
+            })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.success) {
+                localStorage.setItem(SIGNUP_KEY, Date.now().toString());
+                var reportLink = data.report_url || offerUrl;
+                if (reportLink) {
+                    content.innerHTML = '<div class="growth-modal-success"><h3>Your report is ready</h3><p><a href="' + reportLink + '" style="color:#111;font-weight:600;">Read it now</a> or check your inbox.</p></div>';
+                } else {
+                    content.innerHTML = '<div class="growth-modal-success"><h3>You\'re in!</h3><p>Check your inbox for our latest research.</p></div>';
+                }
+                setTimeout(function() { overlay.classList.remove('visible'); }, 4000);
+            } else {
+                btn.textContent = 'Try again';
+                btn.disabled = false;
+            }
+        })
+        .catch(function() {
+            btn.textContent = 'Try again';
+            btn.disabled = false;
+        });
+    });
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') btn.click();
+    });
+})();
+</script>
+
+
+</body>
+</html>

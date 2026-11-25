@@ -1,0 +1,61 @@
+{
+  "priority": 84.0,
+  "alert": {
+    "ts": 1642999060.0,
+    "host": "intranet-server",
+    "rule_id": "5304",
+    "level": 3,
+    "groups": [
+      "syslog",
+      "su",
+      "authentication_success"
+    ]
+  },
+  "stage": "privilege_escalation",
+  "tactic": "Privilege Escalation",
+  "ground_truth": "ATTACK",
+  "explanation": [
+    {
+      "factor": "attack_phase",
+      "value": 0.95,
+      "contribution": 0.285,
+      "why": "stage=privilege_escalation MITRE tactic=Privilege Escalation"
+    },
+    {
+      "factor": "chain_evidence",
+      "value": 1.0,
+      "contribution": 0.15,
+      "why": "prior_alerts=0, active_killchain_stages=4"
+    },
+    {
+      "factor": "asset_criticality",
+      "value": 0.95,
+      "contribution": 0.1425,
+      "why": "asset 'intranet-server' role=intranet-server (crit=0.95)"
+    },
+    {
+      "factor": "attack_progression",
+      "value": 1.0,
+      "contribution": 0.1,
+      "why": "0 alerts in 600s window vs baseline"
+    },
+    {
+      "factor": "asset_vulnerability",
+      "value": 0.9,
+      "contribution": 0.09,
+      "why": "EPSS/CVE exposure score=0.9"
+    },
+    {
+      "factor": "asset_centrality",
+      "value": 0.85,
+      "contribution": 0.0425,
+      "why": "network topology centrality=0.85"
+    },
+    {
+      "factor": "severity",
+      "value": 0.2,
+      "contribution": 0.03,
+      "why": "wazuh rule.level=3 (0.20)"
+    }
+  ]
+}

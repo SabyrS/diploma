@@ -1,0 +1,11 @@
+\chapter{Conclusion}
+
+This diploma project addressed the problem of alert fatigue and context-blind prioritization in open-source SIEM platforms by designing, implementing, and evaluating \textbf{ESPM (Explainable Security Incident Prioritization Module)} for Wazuh SIEM.
+
+The main conclusions achieved by the first pre-defense stage are as follows:
+\begin{enumerate}
+    \item A systematic review of 22 peer-reviewed papers and technical reports revealed that no existing open-source SIEM module simultaneously combines asset context (criticality, EPSS vulnerability exposure, topology centrality), MITRE ATT\&CK event sequence analysis, and intrinsic explainability by design.
+    \item We formulated a 7-factor linear-additive scoring model with an $O(1)$ time-bucketed burst detector (600~s window) and multi-stage kill-chain memory (3600~s window), achieving single-thread throughput of $32,000\text{--}79,500$ alerts/second with less than 1~MB of state memory.
+    \item Evaluated across all 8 multi-step attack scenarios of the public AIT-ADS benchmark (\textbf{2,600,263 Wazuh alerts}), ESPM v0.2 achieved a macro-average \textbf{AUROC of 0.967}, \textbf{Average Precision (AP) of 0.948}, and \textbf{Precision@10\% of 87.3\%} (including $0.995$ and $0.998$ AUROC on two completely untouched blind scenarios, \texttt{harrison} and \texttt{wheeler}), outperforming both the Wazuh Severity baseline (AUROC $0.688$, AP $0.572$) and contextual RBA (AUROC $0.955$, AP $0.903$).
+    \item Crucially, ESPM elevates stealthy root privilege escalation alerts (\texttt{su} and \texttt{sudo} to root, which carry a native Wazuh severity of \texttt{level = 3}) to a median queue rank of \textbf{\#1.5} across the benchmark, compared to median ranks of \textbf{\#210,515} under RBA and \textbf{\#247,210} under static Severity.
+\end{enumerate}

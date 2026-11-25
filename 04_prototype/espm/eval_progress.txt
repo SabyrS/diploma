@@ -1,0 +1,63 @@
+=== russellmitchell [design] alerts=41488 attack=20.6% root_events=3 espm_speed=79458/s
+  espm               AUROC=0.952 AP=0.941 P@10%=1.000 R@10%=0.486 root_rank=2.0
+  espm_no_asset      AUROC=0.950 AP=0.937 P@10%=0.999 R@10%=0.485 root_rank=5.0
+  espm_no_sequence   AUROC=0.955 AP=0.933 P@10%=0.994 R@10%=0.483 root_rank=14.0
+  rba_baseline       AUROC=0.945 AP=0.911 P@10%=0.956 R@10%=0.465 root_rank=7972.5
+  severity_baseline  AUROC=0.720 AP=0.455 P@10%=0.135 R@10%=0.066 root_rank=29261.0
+
+=== shaw [design] alerts=68539 attack=8.7% root_events=4 espm_speed=79456/s
+  espm               AUROC=0.933 AP=0.894 P@10%=0.759 R@10%=0.871 root_rank=1.0
+  espm_no_asset      AUROC=0.933 AP=0.886 P@10%=0.758 R@10%=0.871 root_rank=10.0
+  espm_no_sequence   AUROC=0.935 AP=0.891 P@10%=0.759 R@10%=0.872 root_rank=1.0
+  rba_baseline       AUROC=0.929 AP=0.829 P@10%=0.759 R@10%=0.872 root_rank=5627.0
+  severity_baseline  AUROC=0.718 AP=0.232 P@10%=0.054 R@10%=0.062 root_rank=22449.0
+
+=== wardbeck [design] alerts=88204 attack=6.9% root_events=4 espm_speed=78552/s
+  espm               AUROC=0.935 AP=0.888 P@10%=0.598 R@10%=0.869 root_rank=1.5
+  espm_no_asset      AUROC=0.930 AP=0.885 P@10%=0.596 R@10%=0.866 root_rank=1.5
+  espm_no_sequence   AUROC=0.935 AP=0.882 P@10%=0.596 R@10%=0.867 root_rank=1.5
+  rba_baseline       AUROC=0.928 AP=0.807 P@10%=0.594 R@10%=0.863 root_rank=5745.5
+  severity_baseline  AUROC=0.689 AP=0.178 P@10%=0.044 R@10%=0.063 root_rank=30005.5
+
+=== santos [design] alerts=126513 attack=7.6% root_events=4 espm_speed=72856/s
+  espm               AUROC=0.930 AP=0.862 P@10%=0.627 R@10%=0.829 root_rank=1.0
+  espm_no_asset      AUROC=0.914 AP=0.850 P@10%=0.617 R@10%=0.816 root_rank=1.5
+  espm_no_sequence   AUROC=0.916 AP=0.847 P@10%=0.622 R@10%=0.823 root_rank=1.0
+  rba_baseline       AUROC=0.901 AP=0.687 P@10%=0.615 R@10%=0.813 root_rank=9745.0
+  severity_baseline  AUROC=0.609 AP=0.143 P@10%=0.046 R@10%=0.060 root_rank=52052.5
+
+=== fox [design] alerts=462523 attack=89.1% root_events=4 espm_speed=35155/s
+  espm               AUROC=0.998 AP=1.000 P@10%=1.000 R@10%=0.112 root_rank=3.5
+  espm_no_asset      AUROC=0.998 AP=1.000 P@10%=1.000 R@10%=0.112 root_rank=9.5
+  espm_no_sequence   AUROC=0.998 AP=1.000 P@10%=0.999 R@10%=0.112 root_rank=17.0
+  rba_baseline       AUROC=0.993 AP=0.999 P@10%=0.994 R@10%=0.112 root_rank=411285.5
+  severity_baseline  AUROC=0.796 AP=0.974 P@10%=0.759 R@10%=0.085 root_rank=442367.0
+
+=== wilson [design] alerts=625303 attack=69.1% root_events=4 espm_speed=38644/s
+  espm               AUROC=0.995 AP=0.998 P@10%=1.000 R@10%=0.145 root_rank=1.5
+  espm_no_asset      AUROC=0.995 AP=0.998 P@10%=1.000 R@10%=0.145 root_rank=7.5
+  espm_no_sequence   AUROC=0.994 AP=0.997 P@10%=1.000 R@10%=0.145 root_rank=1.5
+  rba_baseline       AUROC=0.984 AP=0.993 P@10%=0.966 R@10%=0.140 root_rank=429090.5
+  severity_baseline  AUROC=0.692 AP=0.871 P@10%=0.490 R@10%=0.071 root_rank=492376.5
+
+=== harrison [blind] alerts=583754 attack=72.3% root_events=5 espm_speed=37021/s
+  espm               AUROC=0.995 AP=0.998 P@10%=1.000 R@10%=0.138 root_rank=1.0
+  espm_no_asset      AUROC=0.994 AP=0.998 P@10%=1.000 R@10%=0.138 root_rank=2.0
+  espm_no_sequence   AUROC=0.993 AP=0.997 P@10%=1.000 R@10%=0.138 root_rank=1.0
+  rba_baseline       AUROC=0.973 AP=0.990 P@10%=0.941 R@10%=0.130 root_rank=418878.0
+  severity_baseline  AUROC=0.622 AP=0.862 P@10%=0.509 R@10%=0.070 root_rank=483058.0
+
+=== wheeler [blind] alerts=603939 attack=69.7% root_events=4 espm_speed=32050/s
+  espm               AUROC=0.998 AP=0.999 P@10%=1.000 R@10%=0.143 root_rank=310.0
+  espm_no_asset      AUROC=0.998 AP=0.999 P@10%=1.000 R@10%=0.143 root_rank=311.0
+  espm_no_sequence   AUROC=0.998 AP=0.999 P@10%=1.000 R@10%=0.143 root_rank=1.0
+  rba_baseline       AUROC=0.988 AP=0.995 P@10%=0.967 R@10%=0.139 root_rank=421283.0
+  severity_baseline  AUROC=0.654 AP=0.864 P@10%=0.505 R@10%=0.072 root_rank=488354.0
+
+=== MACRO AVERAGES ACROSS ALL 8 SCENARIOS (2,600,263 WAZUH ALERTS):
+  espm               AUROC=0.967 AP=0.948 P@10%=0.873 R@10%=0.449 Median_Root_Rank=#1.5
+  espm_no_asset      AUROC=0.964 AP=0.944 P@10%=0.871 R@10%=0.447 Median_Root_Rank=#6.3
+  espm_no_sequence   AUROC=0.965 AP=0.942 P@10%=0.871 R@10%=0.448 Median_Root_Rank=#1.3
+  rba_baseline       AUROC=0.955 AP=0.903 P@10%=0.849 R@10%=0.442 Median_Root_Rank=#210515.3
+  severity_baseline  AUROC=0.688 AP=0.572 P@10%=0.318 R@10%=0.069 Median_Root_Rank=#247210.3
+DONE

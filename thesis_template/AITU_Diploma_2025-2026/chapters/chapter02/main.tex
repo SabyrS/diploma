@@ -1,0 +1,30 @@
+%
+% File: chapters/chapter02/main.tex
+%
+\chapter{Methodology and Architecture of ESPM}
+\label{chap:02}
+\setlength{\parskip}{0.8em}
+
+\section{Five-Stage System Architecture}
+The proposed Explainable Security Incident Prioritization Module (ESPM) operates as a streaming pipeline on top of Wazuh SIEM JSONL alert streams (\texttt{alerts.json}):
+\begin{enumerate}
+    \item \textbf{Ingestion \& Normalization:} Streams raw Wazuh JSONL records into canonical \texttt{Alert} objects (\texttt{ts}, \texttt{host}, \texttt{location}, \texttt{agent\_ip}, \texttt{rule\_id}, \texttt{level}, \texttt{groups}).
+    \item \textbf{Location-Aware Asset Context Enrichment:} Resolves the canonical asset identity $u = \text{resolve}(\text{host}, \text{location})$ against the CMDB inventory to retrieve business criticality $f_{\text{crit}}$, EPSS vulnerability exposure $f_{\text{vuln}}$, and topology centrality $f_{\text{cent}}$. In AIT-ADS, this links Apache access logs (\texttt{/var/log/apache2/intranet-access.log} collected under \texttt{wazuh-client}) and host authentication logs (\texttt{/var/log/auth.log} on \texttt{intranet-server}) to the unified \texttt{intranet-server} asset profile.
+    \item \textbf{Event Sequence \& Kill-Chain Analysis:} Maps Wazuh rule groups to MITRE ATT\&CK v20 tactics ($f_{\text{phase}} \in [0.05, 0.95]$) and maintains an $O(1)$ 1-second time-bucketed sliding window ($\Delta t = 600\text{ s}$) alongside a multi-stage kill-chain memory ($\Delta T_{\text{chain}} = 3600\text{ s}$).
+    \item \textbf{Additive Explainable Scoring Engine:} Computes the priority score $P(a) \in [0, 100]$ as a normalized weighted sum of seven interpretable factors.
+    \item \textbf{Explanation Renderer \& SOC Dashboard:} Emits ranked factor contributions $c_i = w_i f_i$ with human-readable rationales in JSON and renders an interactive HTML5 analyst queue (\texttt{dashboard.html}).
+\end{enumerate}
+
+\section{Mathematical Formulation of Explainable Scoring}
+For an alert $a$ occurring at timestamp $t$ on resolved asset $u$, the priority score is defined as:
+\begin{equation}
+    \text{Priority}(a) = 100 \cdot \min\left(1.0,\; \frac{\sum_{i=1}^{7} w_i \cdot f_i(a, u, \mathcal{H}_u(t))}{\sum_{i=1}^{7} w_i}\right)
+    \label{eq:espm_score}
+\end{equation}
+where the seven normalized factors $f_i \in [0, 1]$ and calibrated weights $w_i$ are:
+\begin{itemize}
+    \item \textbf{Group A (Asset Context):} $f_{\text{crit}}$ ($w_1=0.15$), $f_{\text{vuln}}$ ($w_2=0.10$), $f_{\text{cent}}$ ($w_3=0.05$).
+    \item \textbf{Group B (Event Sequence):} MITRE ATT\&CK tactic depth $f_{\text{phase}}$ ($w_4=0.30$), temporal burst ratio $f_{\text{prog}}$ ($w_5=0.10$), and multi-stage kill-chain correlation $f_{\text{chain}}$ ($w_6=0.15$).
+    \item \textbf{Group C (SIEM Baseline):} normalized rule severity $f_{\text{sev}} = \min(1.0, \text{level}/15)$ ($w_7=0.15$).
+\end{itemize}
+Because Equation~(\ref{eq:espm_score}) is strictly linear-additive over bounded domain features, the attribution vector $\mathbf{c}(a) = (w_1 f_1, \dots, w_7 f_7)$ satisfies exact completeness ($\sum_i c_i = \text{Priority}(a)/100$), achieving $100\%$ explanation faithfulness and zero bootstrap variance ($\tau = 1.0$).

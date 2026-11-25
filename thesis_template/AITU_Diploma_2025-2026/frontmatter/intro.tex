@@ -1,0 +1,24 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+\section{Background and Motivation}
+Modern Security Operations Centers (SOCs) rely on Security Information and Event Management (SIEM) platforms and Intrusion Detection Systems (IDS) to monitor enterprise infrastructure. However, the sheer volume of generated alerts---often reaching hundreds of thousands of events per day---exceeds human cognitive capacity, leading to \textit{alert fatigue} \cite{Ndichu2026}. As documented in recent empirical studies \cite{Gelman2023, Uetz2026}, the vast majority of SIEM alerts correspond to benign background activity or low-impact reconnaissance, causing critical multi-step intrusions to be buried in noise.
+
+\section{Problem Statement}
+Existing incident prioritization mechanisms in open-source SIEM platforms (such as Wazuh) exhibit three fundamental limitations:
+\begin{enumerate}
+    \item \textbf{Asset Context Blindness:} Priority is dictated by static detection rule severity (\texttt{rule.level}), assigning identical urgency to an exploit attempt against a business-critical, vulnerable production server and an isolated client workstation \cite{Podder2026, Koscinski2025}.
+    \item \textbf{Event Sequence Blindness:} Multi-stage cyberattacks progress through distinct phases of the MITRE ATT\&CK framework \cite{MITRE2026}. In standard Wazuh configurations, critical post-exploitation events such as \texttt{Rule 5402: Successful sudo to ROOT executed} and \texttt{Rule 5304: User successfully changed UID} carry a static severity of \texttt{level = 3}, whereas benign Suricata TLS handshake warnings (\texttt{Rule 20101}) carry \texttt{level = 6}. Without sequence correlation, root compromise events are ranked near the bottom of the queue.
+    \item \textbf{Lack of Trustworthy Explainability:} Deep learning and reinforcement learning prioritization models \cite{Tong2019, Chavali2022, Kalakoti2025} operate as black boxes, while post-hoc XAI wrappers (SHAP \cite{Lundberg2017}, LIME \cite{Ribeiro2016}) are vulnerable to adversarial fairwashing \cite{Mia2025} and attribution instability under feature multicollinearity \cite{Vourganas2026}.
+\end{enumerate}
+
+\section{Research Question, Aim, and Objectives}
+\textbf{Research Question (RQ):} \textit{To what extent does combining asset context (criticality, EPSS vulnerability exposure, centrality) and event sequence analysis (MITRE ATT\&CK phase progression and multi-stage kill-chain memory) improve incident prioritization accuracy in SIEM over severity-based and RBA baselines while preserving deterministic explainability by design?}
+
+\textbf{Aim:} To design, implement, and evaluate an Explainable Security Incident Prioritization Module (ESPM) for Wazuh SIEM that improves multi-step attack ranking and provides transparent factor-level explanations for SOC analysts.
+
+\textbf{Contributions and Team Roles:}
+\begin{itemize}
+    \item \textbf{Sabyr:} Location-aware CMDB asset context modeling (adapting CAPE \cite{Podder2026} and EPSS \cite{Jacobs2023} principles), linear-additive explainable scoring engine, JSON explanation renderer, and interactive SOC web dashboard.
+    \item \textbf{Vladimir:} Streaming Wazuh JSONL ingestion and normalization, MITRE ATT\&CK v20 rule-group mapping, $O(1)$ time-bucketed burst and kill-chain sequence analysis, evaluation harness on 1.41M alerts of AIT-ADS \cite{Landauer2023}, and unit test suite.
+\end{itemize}

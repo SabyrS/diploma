@@ -1,0 +1,27 @@
+%
+% File: chapters/chapter01/introduction.tex
+%
+\chapter{Literature Review}
+\label{chap:01}
+\setlength{\parskip}{0.8em}
+
+\section{Alert Fatigue and Risk-Based Alerting in SOC}
+Security Operations Centers (SOCs) are overwhelmed by high-volume alert streams dominated by false positives. Ndichu et al.~\cite{Ndichu2026} surveyed 119 studies (2015--2026) on AI-driven alert screening, categorizing automation into filtering, triage/prioritization, correlation, and generative contextualization, while highlighting persistent gaps in operational validation, cross-environment portability, and interpretability.
+
+Uetz et al.~\cite{Uetz2026} conducted the first systematic evaluation of Risk-Based Alerting (RBA) across eight datasets, reframing RBA as continuous prioritization rather than binary thresholding. While combining modular risk factors improved average AUROC from $0.72$ (severity baseline) to $0.92$, the authors noted that real-world RBA configurations rely heavily on ad-hoc heuristics and lack multi-stage sequence awareness.
+
+\section{Machine Learning, Reinforcement Learning, and LLM Triage}
+Supervised learning frameworks such as TEQ by Gelman et al.~\cite{Gelman2023} predict alert actionability on production SOC telemetry, reducing response time by $22.9\%$ and suppressing $54\%$ of false positives at $95.1\%$ true positive retention. Game-theoretic reinforcement learning approaches, including adversarial RL by Tong et al.~\cite{Tong2019} and Soft Actor-Critic (SAC-AP) by Chavali et al.~\cite{Chavali2022}, compute robust prioritization policies against adaptive adversaries. However, neural RL policies are opaque black boxes that require complex simulation environments.
+
+Recently, Tsegai et al.~\cite{Tsegai2026} demonstrated that single-agent LLM triage misses over $40.4\%$ of attacks, whereas their multi-agent dialectical framework AIDA achieves $F_1 = 0.958$. Despite strong accuracy, commercial LLM agents incur prohibitive latency and API costs when applied to millions of SIEM alerts, motivating lightweight, transparent scoring alternatives.
+
+\section{Asset Context and Vulnerability Prioritization}
+In vulnerability management, static CVSS scores fail to reflect real-world exploitability. Jacobs et al.~\cite{Jacobs2019, Jacobs2023} introduced the Exploit Prediction Scoring System (EPSS), improving prioritization efficiency by $82\%$. Podder et al.~\cite{Podder2026} proposed CAPE (Context-Aware Prioritization Engine), showing that enriching scanner outputs with deployment reachability, network centrality, and exploitability dramatically outperforms context-blind CVSS/EPSS rankings across 6,138 CVEs. Empirical studies by Koscinski et al.~\cite{Koscinski2025} and Hellsten et al.~\cite{Hellsten2026} further confirm that single-metric scoring systems diverge significantly and must be combined into hybrid, topology-aware risk scores. ESPM transfers the CAPE triad (criticality, vulnerability exposure, centrality) from static CVE management to live SIEM incident streams.
+
+\section{Event Sequence Analysis and Attack Correlation}
+Multi-step intrusions follow structured progressions modeled by the Cyber Kill Chain~\cite{Hutchins2011} and the industry-standard MITRE ATT\&CK v20 taxonomy~\cite{MITRE2026}. Alert correlation surveys by Mirheidari et al.~\cite{Mirheidari2013} and type-graph correlation by Tedesco and Aickelin~\cite{Tedesco2010} emphasize combining statistical burst filtering with precondition-postcondition stage linking. Landauer et al.~\cite{Landauer2023} released the public AIT Alert Data Set (AIT-ADS) comprising 2.65 million alerts across eight multi-step attack scenarios, while Leal D\'iaz et al.~\cite{LealDiaz2023} validated the operational utility of ATT\&CK-aligned critical path visualizations for SOC analysts.
+
+\section{Explainable AI (XAI) in Cybersecurity and Research Gap}
+While LIME~\cite{Ribeiro2016} and SHAP~\cite{Lundberg2017} are widely applied to black-box IDS classifiers~\cite{Kalakoti2025}, Mia and Pritom~\cite{Mia2025} proved that post-hoc XAI explanations in cybersecurity are vulnerable to adversarial fairwashing and backdoor manipulation. Furthermore, Vourganas and Michala~\cite{Vourganas2026} proved theoretically and empirically that feature multicollinearity inflates explanation variance, rendering post-hoc attributions fragile.
+
+\textbf{Identified Research Gap:} No existing open-source SIEM prioritization module simultaneously integrates (1) asset context (criticality, EPSS exposure, centrality), (2) MITRE ATT\&CK event sequence progression and multi-stage memory, and (3) intrinsic explainability by design without relying on fragile post-hoc XAI or expensive LLM agents.
